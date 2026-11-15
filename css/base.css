@@ -1,0 +1,220 @@
+﻿/*
+ * Mission Architect - Base Styles
+ * Aesthetic: Retro Monochrome Ink Sci-Fi ("Explore The Space" Vintage Editorial Concept)
+ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Starfield Canvas: hidden or subtle on light background */
+#starfield-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.05;
+}
+
+/* Typography Hierarchy */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--text-bright);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+h1 { font-size: clamp(2.4rem, 5vw, 4.4rem); }
+h2 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); }
+h3 { font-size: clamp(1.25rem, 2vw, 1.6rem); }
+h4 { font-size: 1.15rem; }
+
+p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+a {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: opacity 150ms ease;
+}
+
+a:hover {
+  opacity: 0.75;
+}
+
+.mono-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Accessible focus outline with crisp offset */
+:focus-visible {
+  outline: 2px solid var(--line);
+  outline-offset: 3px;
+}
+
+/* Clean Webkit Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: var(--radius-xs);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #333;
+}
+
+/* Main App Shell Layout */
+#app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: var(--header-height);
+  background: var(--bg);
+  border-bottom: 2px solid var(--line);
+  display: flex;
+  align-items: center;
+}
+
+.header-container {
+  max-width: var(--max-content-width);
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 var(--space-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-logo-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-bright);
+}
+
+.brand-name {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.brand-sub {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+@media (max-width: 600px) {
+  .header-container {
+    padding: 0 var(--space-3);
+  }
+  .brand-name {
+    font-size: 1.05rem;
+  }
+  .header-actions {
+    gap: var(--space-2);
+  }
+  .header-actions .btn {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+  #header-sound-btn span:last-child {
+    display: none;
+  }
+}
+
+#app-root {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+main#app-main {
+  position: relative;
+  z-index: 2;
+  min-height: calc(100vh - var(--header-height));
+}
+
+.screen {
+  display: none;
+  opacity: 0;
+  transition: opacity 200ms ease-in-out;
+}
+
+.screen.active {
+  display: block;
+  opacity: 1;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Text Utility Classes */
+.text-cyan { color: var(--cyan); }
+.text-amber { color: var(--amber); }
+.text-go { color: var(--go); }
+.text-nogo { color: var(--nogo); }
+.text-dim { color: var(--dim); }
+.text-muted { color: var(--muted); }
+.text-sm { font-size: 0.85rem; }

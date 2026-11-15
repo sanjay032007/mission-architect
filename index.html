@@ -1,0 +1,1225 @@
+<!-- Built with AI assistance for the NASA Space Apps Challenge 2026 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Mission Architect | Space Mission Design Game</title>
+ <meta name="description" content="Design, launch, and manage real scientific space missions. Educational aerospace design game for the NASA Space Apps Challenge 2026.">
+ <meta property="og:title" content="Mission Architect - Space Mission Design Game">
+ <meta property="og:description" content="Interactive space mission design game teaching aerospace trade-offs for Earth, Moon, and Mars missions.">
+ <meta property="og:type" content="website">
+ 
+ <!-- Inline SVG Favicon -->
+ <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23070B14'/><path d='M8 24L24 8M16 8l8 0 0 8' stroke='%234CC9F0' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/><circle cx='10' cy='22' r='4' fill='%237B61FF'/></svg>" type="image/svg+xml">
+
+ <!-- Typography: Space Grotesk with fallback stack -->
+ <script>
+  if (window.location.protocol !== 'file:' && !window.location.hostname.includes('127.0.0.1') && !window.location.hostname.includes('localhost')) {
+   try {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&display=swap';
+    document.head.appendChild(link);
+   } catch(e) {}
+  }
+ </script>
+
+ <!-- Visual Design System Stylesheets -->
+ <link rel="stylesheet" href="css/tokens.css">
+ <link rel="stylesheet" href="css/base.css">
+ <link rel="stylesheet" href="css/components.css">
+ <link rel="stylesheet" href="css/screens.css">
+ <meta name="generator" content="Built with AI assistance ">
+ <link rel="canonical" href="[PUBLIC URL]">
+</head>
+<body>
+ <!-- Performance-optimized Starfield Canvas (max 75 stars, <=30fps) -->
+ <canvas id="starfield-canvas" aria-hidden="true"></canvas>
+
+ <div id="app-root">
+  <!-- Top Mission Control Navigation -->
+  <header class="app-header">
+   <div class="brand-container" id="brand-home-btn" role="button" tabindex="0" aria-label="Go to Mission Architect home">
+    <svg class="brand-logo" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+     <!-- Retro Spiral Galaxy Swirl (inspired by classic space exploration aesthetic) -->
+     <path d="M 20 6 C 28 6 34 12 34 20 C 34 26 29 31 23 31 C 18 31 14 27 14 22 C 14 18 17 15 21 15 C 24 15 26 17 26 20 C 26 21.5 25 22.5 23.5 22.5 C 22.5 22.5 22 21.8 22 21" stroke="#0A0D12" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+     <circle cx="20" cy="20" r="3.2" fill="#FFB224" stroke="#0A0D12" stroke-width="1"/>
+     <circle cx="29" cy="11" r="1.5" fill="#0A0D12"/>
+     <circle cx="11" cy="28" r="1.2" fill="#0A0D12"/>
+    </svg>
+    <span class="brand-title"><strong>MISSION</strong> ARCHITECT</span>
+   </div>
+
+   <div class="nav-actions">
+        <button class="btn btn-ghost btn-sm" id="open-about-btn" aria-label="Open About and Credits">
+     About &amp; Credits
+    </button>
+    <button class="btn btn-ghost btn-sm" id="sound-toggle-btn" aria-label="Toggle Mission Audio" title="Sound Muted">
+     <span id="sound-icon">🔇</span> Sound
+    </button>
+    <button class="btn btn-secondary btn-sm" id="open-glossary-btn" aria-label="Open Spaceflight Glossary">
+     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+     Learn (Glossary)
+    </button>
+   </div>
+  </header>
+
+  <main id="main-content">
+   <!-- 1. Landing Screen -->
+   <section id="screen-landing" class="screen active" aria-labelledby="hero-title">
+    <div class="landing-space-wrapper">
+     <!-- Hero Section: Dribbble Cosmic Design & Animation -->
+     <!-- Hero Section: Retro Monochrome "Explore The Space" Concept -->
+     <div class="landing-retro-hero">
+      <!-- Left Hand-Drawn Art: Starry Blob, Alien, Moon, UFO, Telescope -->
+      <div class="hero-left-art" aria-hidden="true">
+ <svg viewBox="0 0 320 440" width="100%" height="100%" fill="none" class="hero-art-svg">
+  <defs>
+   <pattern id="starPatternLeft" width="100" height="100" patternUnits="userSpaceOnUse">
+    <circle cx="15" cy="20" r="1.2" fill="#FFFFFF"/>
+    <circle cx="75" cy="45" r="1.5" fill="#FFFFFF"/>
+    <circle cx="35" cy="80" r="1" fill="#FFFFFF"/>
+    <circle cx="85" cy="85" r="1.2" fill="#FFFFFF"/>
+    <path d="M 50 15 L 51 22 L 58 23 L 51 24 L 50 31 L 49 24 L 42 23 L 49 22 Z" fill="#FFFFFF"/>
+   </pattern>
+  </defs>
+
+  <!-- Organic Cosmic Starry Fluid Blob -->
+  <path d="M 60 50 C 160 10 260 40 290 140 C 320 240 290 350 210 400 C 130 450 50 410 30 310 C 10 210 10 110 60 50 Z" fill="#0A0D12"/>
+  <!-- Starry Specks inside Blob -->
+  <g fill="#FFFFFF" opacity="0.9">
+   <circle cx="70" cy="90" r="1.5"/>
+   <circle cx="120" cy="65" r="1.2"/>
+   <circle cx="180" cy="80" r="1.8"/>
+   <circle cx="240" cy="110" r="1.2"/>
+   <circle cx="270" cy="190" r="1.5"/>
+   <circle cx="150" cy="140" r="1"/>
+   <circle cx="80" cy="170" r="1.6"/>
+   <circle cx="240" cy="260" r="1.4"/>
+   <circle cx="210" cy="340" r="1.2"/>
+   <circle cx="130" cy="380" r="1.5"/>
+   <circle cx="70" cy="350" r="1.2"/>
+   <!-- Cross Stars -->
+   <path d="M 160 50 L 161 56 L 167 57 L 161 58 L 160 64 L 159 58 L 153 57 L 159 56 Z"/>
+   <path d="M 230 160 L 231 165 L 236 166 L 231 167 L 230 172 L 229 167 L 224 166 L 229 165 Z"/>
+   <path d="M 90 220 L 91 225 L 96 226 L 91 227 L 90 232 L 89 227 L 84 226 L 89 225 Z"/>
+  </g>
+
+  <!-- Flying Saucer UFO -->
+  <g transform="translate(140, 70)">
+   <!-- Downward Beaming Ray Lines -->
+   <path d="M -20 18 L -45 90 M 0 18 L 0 92 M 20 18 L 45 90" stroke="#FFFFFF" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.65"/>
+   <!-- Saucer Dome Cockpit -->
+   <ellipse cx="0" cy="6" rx="14" ry="10" fill="#FAF9F5" stroke="#0A0D12" stroke-width="2"/>
+   <path d="M -8 4 Q 0 -1 8 4" stroke="#0A0D12" stroke-width="1.2" fill="none"/>
+   <!-- Saucer Metallic Disc Flange -->
+   <ellipse cx="0" cy="14" rx="34" ry="9" fill="#FFFFFF" stroke="#0A0D12" stroke-width="2"/>
+   <!-- Porhole Rim Lights -->
+   <circle cx="-20" cy="14" r="2" fill="#0A0D12"/>
+   <circle cx="-10" cy="16" r="2" fill="#0A0D12"/>
+   <circle cx="0" cy="17" r="2.2" fill="#0A0D12"/>
+   <circle cx="10" cy="16" r="2" fill="#0A0D12"/>
+   <circle cx="20" cy="14" r="2" fill="#0A0D12"/>
+   <!-- Underside Thruster -->
+   <ellipse cx="0" cy="18" rx="12" ry="4" fill="#0A0D12"/>
+  </g>
+
+  <!-- Hand-drawn Retro Alien on Moon Rock -->
+  <g transform="translate(65, 230)">
+   <!-- Asteroid / Moon Rock -->
+   <path d="M 15 80 C 35 70 85 72 105 85 C 100 105 70 120 40 115 C 20 110 10 95 15 80 Z" fill="#FAF9F5" stroke="#0A0D12" stroke-width="2"/>
+   <!-- Rock Craters & Hatching -->
+   <ellipse cx="45" cy="92" rx="10" ry="5" fill="#E2DFD6" stroke="#0A0D12" stroke-width="1.2"/>
+   <ellipse cx="78" cy="98" rx="7" ry="3.5" fill="#E2DFD6" stroke="#0A0D12" stroke-width="1.2"/>
+   <path d="M 25 88 L 32 94 M 60 85 L 68 92" stroke="#0A0D12" stroke-width="1"/>
+
+   <!-- Alien Body -->
+   <!-- Legs & Feet -->
+   <path d="M 46 62 L 44 80 M 60 62 L 64 80" stroke="#0A0D12" stroke-width="2.5" stroke-linecap="round"/>
+   <ellipse cx="43" cy="81" rx="5" ry="2.5" fill="#0A0D12"/>
+   <ellipse cx="65" cy="81" rx="5" ry="2.5" fill="#0A0D12"/>
+   <!-- Torso -->
+   <path d="M 45 42 Q 53 40 61 42 Q 63 56 59 64 Q 53 66 47 64 Q 43 56 45 42 Z" fill="#FAF9F5" stroke="#0A0D12" stroke-width="2"/>
+   <!-- Waving Arms -->
+   <path d="M 45 48 Q 30 46 25 38 Q 23 32 28 34" stroke="#0A0D12" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+   <path d="M 61 48 Q 72 52 78 45" stroke="#0A0D12" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+   <!-- Neck & Head -->
+   <path d="M 50 42 L 50 36 M 56 42 L 56 36" stroke="#0A0D12" stroke-width="2"/>
+   <!-- Teardrop Bulbous Head -->
+   <path d="M 38 22 C 36 6 70 6 68 22 C 67 32 59 36 53 36 C 47 36 39 32 38 22 Z" fill="#FAF9F5" stroke="#0A0D12" stroke-width="2.2"/>
+   <!-- Antennae with Bulbs -->
+   <path d="M 46 10 Q 42 0 38 2" stroke="#0A0D12" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+   <circle cx="37" cy="2" r="3" fill="#0A0D12"/>
+   <path d="M 60 10 Q 64 0 68 2" stroke="#0A0D12" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+   <circle cx="69" cy="2" r="3" fill="#0A0D12"/>
+   <!-- Big Almond Alien Eyes -->
+   <ellipse cx="46" cy="22" rx="4.5" ry="7" transform="rotate(-12, 46, 22)" fill="#0A0D12"/>
+   <circle cx="45" cy="20" r="1.5" fill="#FFFFFF"/>
+   <ellipse cx="60" cy="22" rx="4.5" ry="7" transform="rotate(12, 60, 22)" fill="#0A0D12"/>
+   <circle cx="59" cy="20" r="1.5" fill="#FFFFFF"/>
+   <!-- Cute Smile Line -->
+   <path d="M 50 30 Q 53 32 56 30" stroke="#0A0D12" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  </g>
+
+  <!-- Classic Tripod Astronomical Telescope -->
+  <g transform="translate(195, 290)">
+   <!-- Tripod Legs -->
+   <path d="M 40 45 L 12 120 M 40 45 L 42 122 M 40 45 L 68 120" stroke="#0A0D12" stroke-width="2.5" stroke-linecap="round"/>
+   <path d="M 23 88 L 57 88" stroke="#0A0D12" stroke-width="1.5"/>
+   <!-- Mount Swivel Head -->
+   <circle cx="40" cy="45" r="5" fill="#0A0D12"/>
+   <!-- Diagonal Telescope Barrel -->
+   <g transform="rotate(-40, 40, 45)">
+    <rect x="15" y="38" width="55" height="14" rx="2" fill="#FAF9F5" stroke="#0A0D12" stroke-width="2"/>
+    <line x1="25" y1="38" x2="25" y2="52" stroke="#0A0D12" stroke-width="1.5"/>
+    <line x1="55" y1="38" x2="55" y2="52" stroke="#0A0D12" stroke-width="1.5"/>
+    <!-- Objective Lens Ring -->
+    <rect x="68" y="36" width="6" height="18" rx="1" fill="#0A0D12"/>
+    <!-- Eyepiece Tube & Knob -->
+    <rect x="3" y="42" width="12" height="6" fill="#FAF9F5" stroke="#0A0D12" stroke-width="1.5"/>
+    <circle cx="18" cy="34" r="3" fill="#0A0D12"/>
+    <!-- Finder Scope -->
+    <rect x="30" y="30" width="26" height="6" fill="#FAF9F5" stroke="#0A0D12" stroke-width="1.2"/>
+   </g>
+  </g>
+ </svg>
+</div>
+
+      <!-- Center Deck: 3D Extruded Title & Launch Command -->
+      <div class="hero-center-deck">
+       <div class="hero-retro-badge">
+        <span class="badge-dot"></span>
+        <span>NASA SPACE APPS CHALLENGE 2026 // FLIGHT OPERATIONS</span>
+       </div>
+
+       <h1 id="hero-title" class="hero-3d-title">
+        <span class="title-row title-row-1">EXPLORE</span>
+        <span class="title-row title-row-2">THE SPACE</span>
+       </h1>
+
+       <div class="hero-subline">MISSION ARCHITECT &bull; SYSTEM CAD &amp; ORBITAL DYNAMICS</div>
+
+       <p class="hero-editorial-quote">
+        "Many people dream of reaching the stars. Few master the aerospace trade-offs to conquer the void."
+       </p>
+       <div class="hero-author-tag">— James Singleton, Flight Dynamics</div>
+
+       <div class="hero-actions-group">
+        <button class="btn btn-primary btn-lg" id="hero-play-solo-btn">
+         INITIALIZE MISSION &rarr;
+        </button>
+        <button class="btn btn-secondary btn-lg" id="hero-team-mode-btn">
+         CREW MODE (2–4 ROLES)
+        </button>
+       </div>
+
+       <!-- Quick Specs Ribbon -->
+       <div class="hero-telemetry-ribbon">
+        <div class="ribbon-metric">
+         <span class="metric-label">DESTINATIONS</span>
+         <strong class="metric-val text-cyan">EARTH / MOON / MARS</strong>
+        </div>
+        <div class="ribbon-separator"></div>
+        <div class="ribbon-metric">
+         <span class="metric-label">FLIGHT METRICS</span>
+         <strong class="metric-val text-amber">6 LIVE GAUGES</strong>
+        </div>
+        <div class="ribbon-separator"></div>
+        <div class="ribbon-metric">
+         <span class="metric-label">CAD INTEGRATION</span>
+         <strong class="metric-val text-go">MODULAR BUS</strong>
+        </div>
+       </div>
+      </div>
+
+      <!-- Right Hand-Drawn Art: Starry Blob, Weightless Astronaut & Saturn -->
+      <div class="hero-right-art" aria-hidden="true">
+ <svg viewBox="0 0 440 460" width="100%" height="100%" fill="none" class="hero-art-svg">
+  <!-- Giant Organic Cosmic Starry Fluid Blob -->
+  <path d="M 120 30 C 260 5 380 50 410 170 C 440 290 390 400 280 435 C 170 470 60 415 30 310 C 5 210 30 75 120 30 Z" fill="#0A0D12"/>
+  <!-- Twinkling White Stars inside Blob -->
+  <g fill="#FFFFFF" opacity="0.9">
+   <circle cx="85" cy="80" r="1.5"/>
+   <circle cx="150" cy="50" r="1.8"/>
+   <circle cx="270" cy="70" r="1.2"/>
+   <circle cx="340" cy="110" r="1.6"/>
+   <circle cx="390" cy="200" r="1.4"/>
+   <circle cx="370" cy="300" r="1.6"/>
+   <circle cx="320" cy="380" r="1.4"/>
+   <circle cx="210" cy="420" r="1.8"/>
+   <circle cx="120" cy="390" r="1.2"/>
+   <circle cx="65" cy="320" r="1.5"/>
+   <circle cx="60" cy="210" r="1.6"/>
+   <!-- Cross Stars -->
+   <path d="M 180 70 L 181 76 L 187 77 L 181 78 L 180 84 L 179 78 L 173 77 L 179 76 Z"/>
+   <path d="M 330 180 L 331 186 L 337 187 L 331 188 L 330 194 L 329 188 L 323 187 L 329 186 Z"/>
+   <path d="M 140 340 L 141 346 L 147 347 L 141 348 L 140 354 L 139 348 L 133 347 L 139 346 Z"/>
+  </g>
+
+  <!-- Ringed Saturn Planet (Floating in Upper Region of Blob) -->
+  <g transform="translate(280, 115) rotate(-15)">
+   <!-- Back Half of Saturn Rings -->
+   <path d="M -66 0 A 66 16 0 0 1 66 0" stroke="#FFFFFF" stroke-width="4.5" fill="none" opacity="0.95"/>
+   <path d="M -58 0 A 58 13 0 0 1 58 0" stroke="#0A0D12" stroke-width="1.2" fill="none"/>
+   <!-- Planet Sphere -->
+   <circle cx="0" cy="0" r="30" fill="#FAF9F5" stroke="#0A0D12" stroke-width="2.5"/>
+   <!-- Cloud Bands Cross-Hatching -->
+   <path d="M -28 -6 Q 0 -3 28 -6 M -29 4 Q 0 7 29 4 M -26 14 Q 0 17 26 14" stroke="#0A0D12" stroke-width="1.4" fill="none"/>
+   <!-- Front Half of Saturn Rings with Cassini Division -->
+   <path d="M 66 0 A 66 16 0 0 1 -66 0" stroke="#FAF9F5" stroke-width="6.5" fill="none"/>
+   <path d="M 66 0 A 66 16 0 0 1 -66 0" stroke="#0A0D12" stroke-width="2.5" fill="none"/>
+   <path d="M 58 0 A 58 13 0 0 1 -58 0" stroke="#0A0D12" stroke-width="1.4" fill="none"/>
+  </g>
+
+  <!-- Complete Hand-drawn Astronaut Floating Weightlessly Reaching for Saturn -->
+  <g transform="translate(240, 250)"><g class="astronaut-float-group" transform="rotate(8)">
+   <!-- Floating Umbilical Tether Cable -->
+   <path d="M -20 20 C -50 45 -70 95 -95 90 C -120 85 -135 115 -150 110" stroke="#FAF9F5" stroke-width="2" stroke-linecap="round" fill="none"/>
+
+   <!-- Astronaut Backpack / Primary Life Support System (PLSS) -->
+   <rect x="-38" y="-36" width="30" height="66" rx="8" fill="#FAF9F5" stroke="#0A0D12" stroke-width="2.5"/>
+   <rect x="-34" y="-30" width="22" height="16" rx="2" fill="#E2DFD6" stroke="#0A0D12" stroke-width="1.5"/>
+   <line x1="-34" y1="-8" x2="-14" y2="-8" stroke="#0A0D12" stroke-width="1.5"/>
+   <circle cx="-24" cy="8" r="4" fill="#0A0D12"/>
+
+   <!-- Left Leg -->
+   <path d="M -10 34 Q -4 75 14 115" stroke="#0A0D12" stroke-width="15" stroke-linecap="round" fill="none"/>
+   <path d="M -10 34 Q -4 75 14 115" stroke="#FAF9F5" stroke-width="10.5" stroke-linecap="round" fill="none"/>
+   <!-- Knee Joint Ridges -->
+   <path d="M -2 70 L 6 73 M 1 76 L 9 79" stroke="#0A0D12" stroke-width="1.5"/>
+   <!-- Left Moon Boot with Tread -->
+   <path d="M 8 110 L 26 125 L 32 119 L 16 104 Z" fill="#FAF9F5" stroke="#0A0D12" stroke-width="2"/>
+   <path d="M 22 127 L 28 121" stroke="#0A0D12" stroke-width="3"/>
+
+   <!-- Right Leg (Behind) -->
+   <path d="M 8 32 Q 24 65 46 102" stroke="#0A0D12" stroke-width="14" stroke-linecap="round" fill="none"/>
+   <path d="M 8 32 Q 24 65 46 102" stroke="#E2DFD6" stroke-width="9.5" stroke-linecap="round" fill="none"/>
+   <path d="M 40 98 L 56 112 L 62 106 L 46 92 Z" fill="#FAF9F5" stroke="#0A0D12" stroke-width="2"/>
+
+   <!-- Spacesuit Torso & EVA Chest Control Module -->
+   <path d="M -18 -12 Q 0 -15 18 -12 Q 22 16 14 38 Q -2 42 -14 38 Q -22 16 -18 -12 Z" fill="#FAF9F5" stroke="#0A0D12" stroke-width="2.5"/>
+   <!-- Chest Control Module Pack -->
+   <rect x="-8" y="-2" width="20" height="22" rx="3" fill="#E2DFD6" stroke="#0A0D12" stroke-width="1.8"/>
+   <circle cx="-1" cy="4" r="2.5" fill="#0A0D12"/>
+   <circle cx="6" cy="4" r="2.5" fill="#0A0D12"/>
+   <rect x="-4" y="10" width="12" height="6" fill="#0A0D12"/>
+
+   <!-- Left Arm (Floating Behind) -->
+   <path d="M -16 -8 Q -38 10 -48 28" stroke="#0A0D12" stroke-width="12" stroke-linecap="round" fill="none"/>
+   <path d="M -16 -8 Q -38 10 -48 28" stroke="#FAF9F5" stroke-width="8" stroke-linecap="round" fill="none"/>
+   <!-- Left Glove -->
+   <circle cx="-50" cy="32" r="7" fill="#FAF9F5" stroke="#0A0D12" stroke-width="2"/>
+
+   <!-- Astronaut Helmet Assembly -->
+   <circle cx="0" cy="-38" r="25" fill="#FAF9F5" stroke="#0A0D12" stroke-width="2.5"/>
+   <!-- Helmet Neck Collar Ring -->
+   <ellipse cx="0" cy="-14" rx="16" ry="5" fill="#E2DFD6" stroke="#0A0D12" stroke-width="2"/>
+   <!-- Mirror Visor -->
+   <path d="M -10 -46 Q 10 -52 20 -36 Q 16 -22 -2 -24 Q -15 -26 -10 -46 Z" fill="#0A0D12"/>
+   <!-- White Visor Light Reflection Arc -->
+   <path d="M -6 -44 Q 4 -48 12 -38" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+
+   <!-- Outstretched Right Arm Reaching Forward toward Saturn -->
+   <path d="M 14 -10 Q 32 -38 52 -65 Q 65 -85 75 -100" stroke="#0A0D12" stroke-width="13" stroke-linecap="round" fill="none"/>
+   <path d="M 14 -10 Q 32 -38 52 -65 Q 65 -85 75 -100" stroke="#FAF9F5" stroke-width="9" stroke-linecap="round" fill="none"/>
+   <!-- Elbow Bellows Joint Ridges -->
+   <path d="M 44 -56 L 52 -50 M 50 -62 L 58 -56" stroke="#0A0D12" stroke-width="1.5"/>
+   <!-- Articulated Glove Outstretched toward Ringed Planet -->
+   <g transform="translate(78, -104) rotate(-30)">
+    <ellipse cx="0" cy="0" rx="9" ry="7" fill="#FAF9F5" stroke="#0A0D12" stroke-width="2"/>
+    <path d="M 6 -5 L 14 -10 M 8 -2 L 17 -4 M 8 2 L 17 3 M 6 6 L 14 10 M 2 -6 L 8 -13" stroke="#0A0D12" stroke-width="2" stroke-linecap="round"/>
+   </g>
+  </g>
+ </svg>
+</div>
+     </div>
+
+     <!-- Section 2: Destination Planetary Dossiers (Earth, Moon, Mars) -->
+     <div class="landing-showcase-section">
+      <div class="showcase-header">
+       <div>
+        <span class="section-kicker">EXPLORATION CATALOG</span>
+        <h2 class="showcase-title">TARGET DESTINATIONS</h2>
+       </div>
+       <p class="showcase-subtitle">Select your planetary target to begin mission architecture.</p>
+      </div>
+
+      <div class="destination-cards-grid">
+       <!-- Earth Observer -->
+       <div class="dest-glass-card card-interactive" data-preview-dest="earth" tabindex="0" role="button">
+        <div class="dest-card-header">
+         <span class="dest-code">MA-01</span>
+         <span class="badge badge-go">INTRODUCTORY</span>
+        </div>
+        <div class="dest-visual-wrap">
+         <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+          <circle cx="50" cy="50" r="38" fill="#0284C7" stroke="#0A0D12" stroke-width="2.2"/>
+          <path d="M 32 30 Q 42 24 54 28 Q 62 38 48 46 Q 36 44 32 30 Z" fill="#10B981" stroke="#0A0D12" stroke-width="1.4"/>
+          <path d="M 52 50 Q 66 52 64 68 Q 50 74 46 62 Z" fill="#10B981" stroke="#0A0D12" stroke-width="1.4"/>
+          <path d="M 22 28 Q 50 36 78 28" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <ellipse cx="50" cy="50" rx="46" ry="16" stroke="#0A0D12" stroke-width="1.5" stroke-dasharray="3 3"/>
+          <circle cx="86" cy="46" r="3.5" fill="#FFB224"/>
+         </svg>
+        </div>
+        <h3 class="dest-name">Earth Observer</h3>
+        <p class="dest-desc">Monitor climate, track wildfire outbreaks, and map agriculture in Sun-synchronous orbit.</p>
+        <div class="dest-spec-strip">
+         <div class="dest-stat"><span>BUDGET</span><strong>$120M</strong></div>
+         <div class="dest-stat"><span>SOLAR</span><strong>1.00 AU</strong></div>
+         <div class="dest-stat"><span>LIFETIME</span><strong>3.0 YR</strong></div>
+        </div>
+        <button class="btn btn-secondary btn-sm dest-launch-btn">EXPLORE MISSION &rarr;</button>
+       </div>
+
+       <!-- Lunar Scout -->
+       <div class="dest-glass-card card-interactive" data-preview-dest="moon" tabindex="0" role="button">
+        <div class="dest-card-header">
+         <span class="dest-code">MA-02</span>
+         <span class="badge badge-cyan">INTERMEDIATE</span>
+        </div>
+        <div class="dest-visual-wrap">
+         <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+          <ellipse cx="50" cy="50" rx="46" ry="16" stroke="#0A0D12" stroke-width="1.2" stroke-dasharray="3 3"/>
+          <circle cx="50" cy="50" r="38" fill="#CBD5E1" stroke="#0A0D12" stroke-width="2.2"/>
+          <circle cx="38" cy="36" r="9" fill="#94A3B8" stroke="#0A0D12" stroke-width="1.2"/>
+          <circle cx="58" cy="48" r="6" fill="#94A3B8" stroke="#0A0D12" stroke-width="1.2"/>
+          <circle cx="46" cy="68" r="5" fill="#94A3B8" stroke="#0A0D12" stroke-width="1"/>
+          <circle cx="68" cy="34" r="3" fill="#64748B" stroke="#0A0D12" stroke-width="1"/>
+          <circle cx="86" cy="46" r="3.5" fill="#FFB224"/>
+         </svg>
+        </div>
+        <h3 class="dest-name">Lunar Scout</h3>
+        <p class="dest-desc">Map permanently shadowed polar craters and detect water-ice deposits for Artemis human exploration.</p>
+        <div class="dest-spec-strip">
+         <div class="dest-stat"><span>BUDGET</span><strong>$250M</strong></div>
+         <div class="dest-stat"><span>SOLAR</span><strong>1.00 AU</strong></div>
+         <div class="dest-stat"><span>LIFETIME</span><strong>2.0 YR</strong></div>
+        </div>
+        <button class="btn btn-secondary btn-sm dest-launch-btn">EXPLORE MISSION &rarr;</button>
+       </div>
+
+       <!-- Mars Explorer -->
+       <div class="dest-glass-card card-interactive" data-preview-dest="mars" tabindex="0" role="button">
+        <div class="dest-card-header">
+         <span class="dest-code">MA-03</span>
+         <span class="badge badge-amber">ADVANCED</span>
+        </div>
+        <div class="dest-visual-wrap">
+         <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+          <ellipse cx="50" cy="50" rx="46" ry="16" stroke="#0A0D12" stroke-width="1.2" stroke-dasharray="3 3"/>
+          <circle cx="50" cy="50" r="38" fill="#EA580C" stroke="#0A0D12" stroke-width="2.2"/>
+          <ellipse cx="50" cy="18" rx="14" ry="5.5" fill="#FFFFFF" stroke="#0A0D12" stroke-width="1.5"/>
+          <path d="M 30 46 Q 48 54 68 45" stroke="#7C2D12" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <ellipse cx="28" cy="36" rx="6" ry="4" fill="#7C2D12" stroke="#0A0D12" stroke-width="1.2"/>
+          <circle cx="86" cy="46" r="3.5" fill="#FFB224"/>
+         </svg>
+        </div>
+        <h3 class="dest-name">Mars Explorer</h3>
+        <p class="dest-desc">Probe subsurface water reservoirs and atmospheric loss across Martian seasonal dust storm cycles.</p>
+        <div class="dest-spec-strip">
+         <div class="dest-stat"><span>BUDGET</span><strong>$400M</strong></div>
+         <div class="dest-stat"><span>SOLAR</span><strong>1.52 AU (43%)</strong></div>
+         <div class="dest-stat"><span>LIFETIME</span><strong>4.0 YR</strong></div>
+        </div>
+        <button class="btn btn-secondary btn-sm dest-launch-btn">EXPLORE MISSION &rarr;</button>
+       </div>
+      </div>
+     </div>
+
+     <!-- Section 3: 4-Step Architecture Lifecycle -->
+     <div class="landing-lifecycle-strip">
+      <div class="lifecycle-step-item">
+       <div class="step-circle-badge">01</div>
+       <div class="step-info">
+        <h4>Destination</h4>
+        <p>Select target planetary body & science criteria</p>
+       </div>
+      </div>
+      <div class="lifecycle-line"></div>
+      <div class="lifecycle-step-item">
+       <div class="step-circle-badge">02</div>
+       <div class="step-info">
+        <h4>Architecture</h4>
+        <p>Integrate bus, power arrays & payload sensors</p>
+       </div>
+      </div>
+      <div class="lifecycle-line"></div>
+      <div class="lifecycle-step-item">
+       <div class="step-circle-badge">03</div>
+       <div class="step-info">
+        <h4>Trajectory</h4>
+        <p>Match wet mass against launch lift envelopes</p>
+       </div>
+      </div>
+      <div class="lifecycle-line"></div>
+      <div class="lifecycle-step-item">
+       <div class="step-circle-badge">04</div>
+       <div class="step-info">
+        <h4>Simulation</h4>
+        <p>Run orbital telemetry & anomaly recovery</p>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section>
+
+   <!-- 1b. Team Mode Setup Screen -->
+   <section id="screen-team-setup" class="screen" aria-labelledby="team-setup-title">
+        <div class="team-setup-container" style="max-width: 760px; margin: 0 auto; padding: var(--space-3) var(--space-4) var(--space-6);">
+          <div class="team-setup-header" style="text-align: center; margin-bottom: var(--space-5);">
+            <div class="console-tag" style="display:inline-flex; align-items:center; gap:8px; margin-bottom:10px;">
+              <span class="status-led led-amber pulse"></span>
+              <span>CREW CAD ALLOCATION // PASS-THE-DEVICE CONCURRENT ENGINEERING</span>
+            </div>
+            <h2 id="team-setup-title" class="step-headline" style="font-size:2rem; font-family:var(--font-heading); margin-bottom:8px; text-transform:uppercase;">Team Mode: Mission Flight Crew</h2>
+            <p class="step-subtitle" style="max-width: 580px; margin: 0 auto; font-size: 0.95rem; color: var(--text-muted);">
+              Pass-the-device collaborative engineering for 2–4 players on one screen. Assign specialist flight roles, negotiate trade-offs, and reach pre-launch consensus.
+            </p>
+          </div>
+
+          <div class="console-panel has-corner-ticks team-setup-panel" style="background:var(--surface); border:2px solid var(--line); box-shadow:var(--shadow-hard); border-radius:var(--radius); overflow:hidden;">
+            <div class="panel-header-strip">
+              <span class="panel-header-title">ROSTER-CONFIG // 01 HARDWARE &amp; MISSION ALLOCATION</span>
+              <span class="status-led led-go"></span>
+            </div>
+
+            <div style="padding: 24px;">
+              <div style="margin-bottom: 24px;">
+                <label style="display:block; font-family:var(--font-mono); font-size:0.78rem; font-weight:700; color:var(--text); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:10px;">
+                  1. How Many Engineers On Duty?
+                </label>
+                <div class="team-count-segmented" style="display:flex; gap:12px;">
+                  <button class="btn btn-secondary team-count-btn" data-team-count="2" style="flex:1; height:44px; font-weight:700;">2 PLAYERS</button>
+                  <button class="btn btn-secondary team-count-btn" data-team-count="3" style="flex:1; height:44px; font-weight:700;">3 PLAYERS</button>
+                  <button class="btn btn-secondary team-count-btn active" data-team-count="4" style="flex:1; height:44px; font-weight:700; border-color:var(--amber); background:var(--surface-alt);">4 PLAYERS</button>
+                </div>
+              </div>
+
+              <div style="margin-bottom: 24px;">
+                <label style="display:block; font-family:var(--font-mono); font-size:0.78rem; font-weight:700; color:var(--text); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:12px;">
+                  2. Flight Specialist Roster
+                </label>
+                <div id="team-players-inputs" style="display:flex; flex-direction:column; gap:14px;">
+                  <!-- Populated dynamically by ui.js -->
+                </div>
+              </div>
+
+              <div style="margin-top: 24px;">
+                <button class="btn btn-primary" id="team-start-btn" style="width:100%; height:50px; font-size:1.05rem; font-weight:800; letter-spacing:0.04em;">
+                  PROCEED TO MISSION DOSSIERS &rarr;
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+   <!-- 1c. Full-Screen Pass-The-Device Interstitial -->
+   <section id="screen-pass-device" class="screen" aria-labelledby="pass-title">
+    <div class="card" style="max-width:600px; margin: var(--space-7) auto; text-align:center; padding: var(--space-6); border-color:var(--accent); box-shadow: 0 0 40px rgba(76,201,240,0.2);">
+     <span class="badge" style="background:rgba(76,201,240,0.15); color:var(--accent); font-size:0.9rem; margin-bottom:var(--space-3);">Pass the Device</span>
+     <h2 id="pass-title" style="font-size:2rem; margin-bottom:4px;">Hand Device to:</h2>
+     <div id="pass-player-avatar" style="width:68px; height:68px; border-radius:50%; margin: var(--space-2) auto 0; display:flex; align-items:center; justify-content:center; font-size:2rem; font-weight:800; color:#070B14; background:var(--cyan); box-shadow:0 0 25px rgba(56,213,255,0.5);">A</div>
+     <div id="pass-player-name" style="font-size:2.6rem; font-weight:800; color:var(--text); font-family:var(--font-heading); margin: var(--space-1) 0;">
+      Alex
+     </div>
+     <div id="pass-player-role" class="badge" style="font-size:1.1rem; padding:6px 16px; margin-bottom:var(--space-4);">
+      Spacecraft Engineer
+     </div>
+     <p id="pass-player-desc" class="text-muted" style="font-size:0.95rem; margin-bottom:var(--space-4);">
+      Designs electrical power, thermal insulation, and structural mass margins.
+     </p>
+     <div style="background:rgba(255,255,255,0.05); padding:var(--space-3); border-radius:var(--radius-sm); border-left:4px solid var(--warn); text-align:left; margin-bottom:var(--space-6);">
+      <strong style="color:var(--warn); font-size:0.85rem; text-transform:uppercase;">Confidential Strategic Priority:</strong>
+      <p id="pass-player-priority" style="font-size:1rem; font-weight:600; color:#FFFFFF; margin-top:2px;">
+       Keep mass low & ensure positive power balance
+      </p>
+     </div>
+     <button class="btn btn-primary" id="pass-ready-btn" style="min-width:200px; font-size:1.1rem; padding:12px 32px;">
+      I am Ready &rarr;
+     </button>
+    </div>
+   </section>
+
+   <!-- 2. Mission Select Screen -->
+   <section id="screen-mission-select" class="screen" aria-labelledby="mission-select-title">
+    <div class="mission-select-header">
+     <div class="console-tag" style="display:inline-flex; align-items:center; gap:8px; margin-bottom:12px;">
+      <span class="status-led led-amber"></span>
+      <span>OPERATIONAL CATALOG // SYS-01 DESTINATIONS</span>
+     </div>
+     <h2 id="mission-select-title" class="step-headline">TARGET RECONNAISSANCE & FLIGHT DOSSIERS</h2>
+     <p class="step-subtitle">Select operational target body. Each trajectory dictates solar irradiance, orbital thermal cycles, space weather decay rates, and minimum mission lifetime requirements.</p>
+    </div>
+
+    <!-- Simulation Difficulty Console Rack -->
+    <div class="console-panel has-corner-ticks difficulty-console-rack">
+     <div class="panel-header-strip">
+      <span class="panel-header-title">ENV-CONFIG // SIMULATION FLIGHT PROFILE</span>
+      <span class="status-led led-go"></span>
+     </div>
+     <div class="difficulty-segmented-control" role="group" aria-label="Simulation Difficulty">
+      <button class="diff-btn" data-diff="easy">STANDARD / EASY</button>
+      <button class="diff-btn active" data-diff="normal">NOMINAL / NORMAL</button>
+      <button class="diff-btn" data-diff="hard">HIGH-STRESS / HARD</button>
+      <button class="diff-btn" data-diff="sandbox">SANDBOX / UNRESTRICTED</button>
+     </div>
+     <div id="difficulty-description-ticker" class="difficulty-ticker" aria-live="polite">
+      REALISTIC NASA FLIGHT RULES // $120M BASE // NOMINAL RADIATION DECAY
+     </div>
+    </div>
+
+    <!-- Target Mission Dossiers Grid -->
+    <div class="mission-grid" id="mission-cards-grid">
+     <!-- Populated by ui.js -->
+    </div>
+   </section>
+
+   <!-- 3. Build Screen (Main Design Canvas) -->
+   <section id="screen-build" class="screen" aria-labelledby="build-screen-title">
+    <h2 id="build-screen-title" class="visually-hidden">Spacecraft Architecture Console</h2>
+
+    <div class="build-layout">
+     <!-- Left Rail Stepper Column (Sticky Rack) -->
+     <nav class="build-stepper-rail has-corner-ticks" aria-label="Flight Subsystems Navigation">
+      <div class="stepper-rail-header">
+       <span class="stepper-rail-code">NAV-01 // RACK</span>
+       <span class="status-led led-go pulse" title="Navigation Interlock Active"></span>
+      </div>
+      <ol class="rail-stepper">
+       <li class="step-item rail-step-item active" data-step-index="0" role="tab" tabindex="0" aria-label="Step 1: Chassis Bus">
+        <div class="rail-step-top">
+         <span class="rail-step-num">01</span>
+         <span class="status-led led-amber pulse"></span>
+        </div>
+        <div class="rail-step-name">CHASSIS BUS</div>
+        <div class="rail-step-sub">SYS-01 BUS</div>
+       </li>
+       <li class="step-item rail-step-item" data-step-index="1" role="tab" tabindex="0" aria-label="Step 2: Power and Communications">
+        <div class="rail-step-top">
+         <span class="rail-step-num">02</span>
+         <span class="status-led"></span>
+        </div>
+        <div class="rail-step-name">POWER & COMMS</div>
+        <div class="rail-step-sub">SYS-02 PWR/RF</div>
+       </li>
+       <li class="step-item rail-step-item" data-step-index="2" role="tab" tabindex="0" aria-label="Step 3: Science Payload">
+        <div class="rail-step-top">
+         <span class="rail-step-num">03</span>
+         <span class="status-led"></span>
+        </div>
+        <div class="rail-step-name">SCIENCE PAYLOAD</div>
+        <div class="rail-step-sub">SYS-03 SENSORS</div>
+       </li>
+       <li class="step-item rail-step-item" data-step-index="3" role="tab" tabindex="0" aria-label="Step 4: Launch and Orbit">
+        <div class="rail-step-top">
+         <span class="rail-step-num">04</span>
+         <span class="status-led"></span>
+        </div>
+        <div class="rail-step-name">LAUNCH & ORBIT</div>
+        <div class="rail-step-sub">SYS-04 ORBIT</div>
+       </li>
+       <li class="step-item rail-step-item" data-step-index="4" role="tab" tabindex="0" aria-label="Step 5: Flight Readiness Review">
+        <div class="rail-step-top">
+         <span class="rail-step-num">05</span>
+         <span class="status-led"></span>
+        </div>
+        <div class="rail-step-name">FLIGHT REVIEW</div>
+        <div class="rail-step-sub">SYS-05 REVIEW</div>
+       </li>
+      </ol>
+     </nav>
+
+     <!-- Center Options Column -->
+     <div class="options-column">
+      <div id="build-step-content">
+       <!-- Dynamically populated step cards -->
+      </div>
+
+      <!-- Stepper Bottom Controls -->
+      <div class="build-nav-bar">
+       <button class="btn btn-secondary" id="build-back-btn">&larr; PREVIOUS</button>
+       <button class="btn btn-primary" id="build-next-btn">NEXT SUBSYSTEM &rarr;</button>
+      </div>
+     </div>
+
+     <!-- Right Column: Desktop Live Dashboard (Sticky Telemetry Console) -->
+     <aside class="desktop-dash-column" aria-label="Live Telemetry Dashboard">
+      <div class="dashboard-card has-corner-ticks">
+       <div class="panel-header-strip">
+        <span class="panel-subsystem-code">TLM-01 // FLIGHT CONSOLE</span>
+        <div style="display:flex; align-items:center; gap:6px;">
+         <span class="label-mono" style="font-size:0.68rem; color:var(--cyan);">STREAMING</span>
+         <span class="status-led led-go pulse"></span>
+        </div>
+       </div>
+       <div class="dashboard-gauges" id="dashboard-gauges-container">
+        <!-- 6 Gauges populated by ui.js -->
+       </div>
+      </div>
+     </aside>
+    </div>
+
+    <!-- Mobile Sticky Bottom Dashboard Bar & Sheet -->
+    <div class="mobile-dash-bar" aria-label="Mobile summary bar">
+     <div class="mobile-dash-summary" id="mobile-dash-summary-text">
+      <span>Telemetry loading...</span>
+     </div>
+     <button class="btn btn-secondary btn-sm" id="mobile-dash-toggle-btn">Gauges ▲</button>
+    </div>
+    <div class="mobile-dash-sheet" id="mobile-dash-sheet">
+     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h4>Live Mission Telemetry</h4>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('mobile-dash-sheet').classList.remove('open')">✕ Close</button>
+     </div>
+     <div class="dashboard-gauges" id="dashboard-gauges-container-mobile">
+      <!-- Mobile mirrors gauges -->
+     </div>
+    </div>
+   </section>
+
+   
+
+   <!-- 5. Simulation Screen (Interactive 2D Orbital Timeline Canvas) -->
+   <section id="screen-sim" class="screen" aria-labelledby="sim-screen-title">
+    <div class="sim-header">
+     <div>
+      <h2 id="sim-screen-title" style="font-size:1.6rem;">Mission Flight Operations</h2>
+      <p class="text-muted" id="sim-subtitle" style="font-size:0.9rem;">Earth Observer &bull; Real-time Physics & Orbit Simulation</p>
+     </div>
+     <div class="badge" id="sim-met-timer" style="font-family:monospace; font-size:1rem; padding:6px 14px; background:rgba(76,201,240,0.15); color:var(--accent);">
+      MET: T+ 00d 00h
+     </div>
+    </div>
+
+    <!-- 5-Phase Animated Timeline Stepper -->
+    <div class="sim-timeline" aria-label="Flight Phases Timeline">
+     <div class="sim-timeline-line">
+      <div class="sim-timeline-progress" id="sim-timeline-progress"></div>
+     </div>
+     <div class="sim-phase-node active" id="sim-phase-node-0">
+      <div class="sim-phase-dot">1</div>
+      <span class="sim-phase-label">Launch</span>
+     </div>
+     <div class="sim-phase-node" id="sim-phase-node-1">
+      <div class="sim-phase-dot">2</div>
+      <span class="sim-phase-label">Transit / Insertion</span>
+     </div>
+     <div class="sim-phase-node" id="sim-phase-node-2">
+      <div class="sim-phase-dot">3</div>
+      <span class="sim-phase-label">Commissioning</span>
+     </div>
+     <div class="sim-phase-node" id="sim-phase-node-3">
+      <div class="sim-phase-dot">4</div>
+      <span class="sim-phase-label">Science Ops</span>
+     </div>
+     <div class="sim-phase-node" id="sim-phase-node-4">
+      <div class="sim-phase-dot">5</div>
+      <span class="sim-phase-label">End of Mission</span>
+     </div>
+    </div>
+
+    <!-- Interactive Simulation Canvas -->
+    <div class="sim-canvas-container" id="sim-canvas-container">
+     <canvas id="sim-canvas" width="1040" height="380" aria-label="Orbital simulation visualization"></canvas>
+     <div id="sim-event-popup-container" style="display:none;"></div>
+    </div>
+
+    <!-- Simulation Controls Bar -->
+    <div class="sim-controls-bar">
+     <div style="display:flex; align-items:center; gap:var(--space-3);">
+      <button class="btn btn-secondary btn-sm" id="sim-play-pause-btn" aria-label="Pause or Resume simulation">
+       ⏸ Pause
+      </button>
+      <div class="sim-speed-group" role="group" aria-label="Simulation Speed Controls">
+       <button class="sim-speed-btn active" data-sim-speed="1">1x</button>
+       <button class="sim-speed-btn" data-sim-speed="2">2x</button>
+       <button class="sim-speed-btn" data-sim-speed="4">4x</button>
+      </div>
+     </div>
+     <div>
+      <button class="btn btn-secondary btn-sm" id="sim-skip-btn">
+       Skip to Report ⏭
+      </button>
+     </div>
+    </div>
+
+    <!-- Live Simulation Telemetry Meters with Sparklines -->
+    <div class="sim-meters-grid">
+     <div class="sim-meter-card">
+      <div class="sim-meter-header">
+       <span class="sim-meter-label">Trajectory & Altitude</span>
+       <span class="sim-meter-tag" id="sim-meter-phase-tag">ORBIT</span>
+      </div>
+      <div class="sim-meter-value" id="sim-meter-alt">705 km (SSO)</div>
+      <canvas class="sim-sparkline" id="sparkline-alt" width="180" height="30" aria-hidden="true"></canvas>
+     </div>
+     <div class="sim-meter-card">
+      <div class="sim-meter-header">
+       <span class="sim-meter-label">Solar Power State</span>
+       <span class="sim-meter-tag" id="sim-meter-power-tag">ACTIVE</span>
+      </div>
+      <div class="sim-meter-value" id="sim-meter-power" style="color:var(--ok);">212 W / 80 W</div>
+      <canvas class="sim-sparkline" id="sparkline-power" width="180" height="30" aria-hidden="true"></canvas>
+     </div>
+     <div class="sim-meter-card">
+      <div class="sim-meter-header">
+       <span class="sim-meter-label">Downlink Stream</span>
+       <span class="sim-meter-tag" id="sim-meter-data-tag">CARRIER LOCK</span>
+      </div>
+      <div class="sim-meter-value" id="sim-meter-data">7.2 Gb / day</div>
+      <canvas class="sim-sparkline" id="sparkline-data" width="180" height="30" aria-hidden="true"></canvas>
+     </div>
+     <div class="sim-meter-card">
+      <div class="sim-meter-header">
+       <span class="sim-meter-label">Science Return</span>
+       <span class="sim-meter-tag" id="sim-meter-sci-tag">ACQUIRING</span>
+      </div>
+      <div class="sim-meter-value" id="sim-meter-science" style="color:var(--cyan);">0 pts</div>
+      <canvas class="sim-sparkline" id="sparkline-sci" width="180" height="30" aria-hidden="true"></canvas>
+     </div>
+    </div>
+
+    <!-- Scrolling Flight Director Log Box -->
+    <div class="card" style="padding:var(--space-3); margin-top:var(--space-3);">
+     <div style="font-size:0.8rem; font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:6px;">
+      Flight Director Telemetry Feed
+     </div>
+     <div class="sim-log-box" id="sim-log-box" aria-live="polite">
+      <!-- Populated dynamically -->
+     </div>
+    </div>
+   </section>
+
+   <!-- 6. Post-Mission Report Screen -->
+   <section id="screen-report" class="screen" aria-labelledby="report-screen-title">
+    <h2 id="report-screen-title" class="visually-hidden">Post-Mission Debriefing</h2>
+
+    <div class="report-hero">
+     <div class="report-hero-top">
+      <div class="report-medallion-box">
+       <div id="report-grade" class="report-grade-badge grade-A">A</div>
+       <div class="report-score-counter"><span id="report-score">0</span><span class="report-score-max"> / 100</span></div>
+       <p class="text-muted" style="margin-top: 4px; font-weight:600;">Overall Flight Performance Score</p>
+       <div id="report-grade-label" class="report-grade-subtitle">Mission Qualified</div>
+      </div>
+
+      <!-- SVG Radar Assessment Chart -->
+      <div class="report-radar-container" id="report-radar-container" aria-label="Mission Performance Radar Chart">
+       <!-- Rendered dynamically by ui.js -->
+      </div>
+     </div>
+
+     <!-- Breakdown bars -->
+     <div class="report-bars-grid" id="report-bars-grid">
+      <!-- Populated by ui.js -->
+     </div>
+    </div>
+
+    <!-- Qualitative Debriefing Feedback -->
+    <div class="report-feedback-grid">
+     <div class="card">
+      <h3 style="color:var(--ok); display:flex; align-items:center; gap:8px;">
+       <span>✓</span> What Went Well
+      </h3>
+      <ul class="feedback-list" id="report-went-well-list"></ul>
+     </div>
+
+     <div class="card">
+      <h3 style="color:var(--warn); display:flex; align-items:center; gap:8px;">
+       <span>⚠️</span> What Limited You
+      </h3>
+      <ul class="feedback-list" id="report-limited-list"></ul>
+     </div>
+    </div>
+
+    <div class="card" style="margin-bottom: var(--space-5);">
+     <h3 style="color:var(--accent); display:flex; align-items:center; gap:8px;">
+      <span>💡</span> Recommended Improvements
+     </h3>
+     <ul class="feedback-list" id="report-next-tips-list"></ul>
+    </div>
+
+    <div id="report-real-mission-card"></div>
+
+    <!-- Confetti Burst Container for High Scores -->
+    <div id="confetti-container" aria-hidden="true"></div>
+
+    <div class="report-actions">
+     <button class="btn btn-primary" id="report-edit-btn">
+      Edit Spacecraft Design
+     </button>
+     <button class="btn btn-secondary" id="download-patch-btn">
+      🎖️ Download Mission Patch
+     </button>
+     <button class="btn btn-secondary" id="report-share-btn">
+      🔗 Share Design Link
+     </button>
+     <button class="btn btn-secondary" id="report-compare-btn">
+      📊 Compare Past Runs
+     </button>
+     <button class="btn btn-ghost" id="report-new-btn">
+      Select New Mission
+     </button>
+    </div>
+   </section>
+  </main>
+
+    <!-- Terminal Countdown Overlay (T-10 Flight Terminal) -->
+  <div id="launch-countdown-overlay" class="countdown-overlay" style="display:none;" aria-hidden="true">
+   <div class="console-panel has-corner-ticks countdown-terminal-card">
+    <div class="panel-header-strip">
+     <span class="panel-header-title">TERM-01 // TERMINAL COUNTDOWN SEQUENCER</span>
+     <div style="display:flex; align-items:center; gap:8px;">
+      <span style="font-family:var(--font-mono); font-size:0.7rem; color:var(--amber);">AUTO-SEQUENCE ENGAGED</span>
+      <span class="status-led led-amber pulse"></span>
+     </div>
+    </div>
+
+    <div class="countdown-display-rack">
+     <div class="countdown-badge">NASA LAUNCH CONTROL // IGNITION CLOCK</div>
+     <div class="countdown-digits-wrapper">
+      <span class="countdown-num mono-num" id="countdown-num">T-00:00:10</span>
+     </div>
+     <div class="countdown-label mono-num" id="countdown-label">RANGE SAFETY CLEAR // AUTOMATED SEQUENCE INITIATED</div>
+    </div>
+
+    <div class="countdown-ticker-log" id="countdown-ticker-log" aria-live="polite">
+     <div class="ticker-line"><span class="text-dim">[T-10]</span> RANGE SAFETY REPORT: ALL SECTORS GREEN</div>
+    </div>
+
+    <div class="countdown-footer-controls">
+     <button class="btn btn-secondary btn-sm" id="abort-countdown-btn" style="color:var(--nogo); border-color:var(--nogo);">[ ABORT LAUNCH ]</button>
+     <button class="btn btn-primary btn-sm" id="skip-countdown-btn">SKIP TO LIFTOFF &rarr;</button>
+    </div>
+   </div>
+   </div>
+  </div>
+
+  <!-- Global Accessible Toast Alert Container -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- Spaceflight Educational Glossary Slide-In Drawer -->
+  <div class="drawer-backdrop" id="glossary-backdrop" aria-hidden="true"></div>
+  <aside class="drawer" id="glossary-drawer" aria-labelledby="glossary-heading" aria-modal="true" role="dialog">
+   <div class="drawer-header">
+    <h3 id="glossary-heading">Spaceflight Glossary</h3>
+    <button class="btn btn-ghost btn-sm" id="close-glossary-btn" aria-label="Close glossary">✕</button>
+   </div>
+   <div class="drawer-body" id="glossary-drawer-body">
+    <!-- Definitions populated by ui.js -->
+   </div>
+  </aside>
+
+  <!-- Side-by-Side Design Comparison Modal -->
+  <div class="modal-backdrop" id="compare-modal" role="dialog" aria-modal="true" aria-labelledby="compare-title">
+   <div class="modal-dialog" style="max-width:780px;">
+    <div class="modal-header">
+     <h3 id="compare-title">Mission Iteration Comparison (Last 3 Flights)</h3>
+     <button class="btn btn-ghost btn-sm" id="close-compare-btn" aria-label="Close comparison">✕</button>
+    </div>
+    <div id="compare-table-container" style="overflow-x:auto;">
+     <!-- Populated by ui.js -->
+    </div>
+   </div>
+  </div>
+
+  <!-- Accessible Modal for "Why?" Explanations and How-to-Play -->
+  <div class="modal-backdrop" id="info-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+   <div class="modal-dialog">
+    <div class="modal-header">
+     <h3 id="modal-title">Information</h3>
+     <button class="btn btn-ghost btn-sm" id="close-modal-btn" aria-label="Close modal">✕</button>
+    </div>
+    <div id="modal-content"></div>
+   </div>
+  </div>
+
+  
+  <!-- Accessible About & Credits Modal -->
+  <div class="modal-backdrop" id="about-credits-modal" role="dialog" aria-modal="true" aria-labelledby="about-modal-title" style="display:none;">
+   <div class="modal-dialog modal-dialog-lg" style="max-width:820px;">
+    <div class="modal-header">
+     <div style="display:flex; align-items:center; gap:8px;">
+      <span class="status-led led-amber"></span>
+      <h3 id="about-modal-title">MISSION ARCHITECT // SYSTEM DOSSIER &amp; CREDITS</h3>
+     </div>
+     <button class="btn btn-ghost btn-sm" id="close-about-btn" aria-label="Close About and Credits">✕</button>
+    </div>
+
+    <!-- Accessible Tabs Navigation -->
+    <div class="modal-tabs" role="tablist" aria-label="About modal sections">
+     <button class="modal-tab active" role="tab" id="tab-btn-about" aria-selected="true" aria-controls="tab-pane-about" data-target="about">01 // ABOUT</button>
+     <button class="modal-tab" role="tab" id="tab-btn-scores" aria-selected="false" aria-controls="tab-pane-scores" data-target="scores">02 // HOW SCORES WORK</button>
+     <button class="modal-tab" role="tab" id="tab-btn-credits" aria-selected="false" aria-controls="tab-pane-credits" data-target="credits">03 // CREDITS &amp; LICENSES</button>
+     <button class="modal-tab" role="tab" id="tab-btn-privacy" aria-selected="false" aria-controls="tab-pane-privacy" data-target="privacy">04 // PRIVACY</button>
+    </div>
+
+    <div class="modal-body modal-tabs-content" style="max-height:65vh; overflow-y:auto; padding:20px;">
+     <!-- Pane 1: About -->
+     <div class="tab-pane active" id="tab-pane-about" role="tabpanel" aria-labelledby="tab-btn-about">
+      <h4 style="font-family:var(--font-heading); font-size:1.15rem; margin-bottom:8px;">Space Mission Design Game</h4>
+      <p style="margin-bottom:12px;">Mission Architect is an educational aerospace engineering browser simulation built for the <strong>NASA Space Apps Challenge 2026</strong> (Challenge: Space Mission Design Game). Players balance critical aerospace trade-offs—mass, electrical power, capital budget, downlink bandwidth, and mission lifetime—to design, launch, and manage real scientific missions to Earth orbit, the Moon, or Mars.</p>
+      
+      <div class="spec-matrix" style="grid-template-columns: repeat(2, 1fr); margin-bottom:16px;">
+       <div class="spec-cell"><span class="spec-k">PROJECT LEAD &amp; DESIGN</span><span class="spec-v">[YOUR NAME]</span></div>
+       <div class="spec-cell"><span class="spec-k">TEAM ROSTER</span><span class="spec-v">[TEAM NAME]</span></div>
+       <div class="spec-cell"><span class="spec-k">CHALLENGE TRACK</span><span class="spec-v">SPACE APPS 2026</span></div>
+       <div class="spec-cell"><span class="spec-k">TECH ARCHITECTURE</span><span class="spec-v">HTML5 / CSS3 / ES MODULES</span></div>
+      </div>
+
+      <h4 style="font-family:var(--font-heading); font-size:1.05rem; margin-top:16px; margin-bottom:6px;">How This Was Made (AI Disclosure)</h4>
+      <p style="margin-bottom:12px; background:var(--surface-alt); padding:12px; border:1px solid var(--line); border-radius:var(--radius-xs);">
+       Mission Architect was designed by [YOUR NAME] / [TEAM NAME] and built with AI-assisted coding. Spacecraft, planet and mission patch artwork are original SVG and canvas drawings generated as code with AI assistance. Sound effects are synthesized in the browser with the Web Audio API. The game contains no AI model and makes no AI calls while running.
+      </p>
+
+      <h4 style="font-family:var(--font-heading); font-size:1.05rem; margin-top:16px; margin-bottom:6px;">Data &amp; Educational Accuracy Disclosure</h4>
+      <p style="margin-bottom:8px; font-size:0.9rem; color:var(--text-muted);">
+       Mission Architect is a simplified educational model. Mission structure, subsystems and trade-offs were informed by the NASA resources listed below. Part specifications, costs, orbit values and scores are simplified, illustrative numbers created for learning. They are not NASA datasets and not real mission data.
+      </p>
+     </div>
+
+     <!-- Pane 2: How Scores Work -->
+     <div class="tab-pane" id="tab-pane-scores" role="tabpanel" aria-labelledby="tab-btn-scores" style="display:none;">
+      <h4 style="font-family:var(--font-heading); font-size:1.15rem; margin-bottom:8px;">Evaluation &amp; Scoring Matrix (100 Pts Base)</h4>
+      <p style="margin-bottom:12px;">Missions undergo an automated post-flight evaluation across four aerospace pillars, plus an optional Team Sync bonus in collaborative crew mode.</p>
+
+      <div class="table-container" style="margin-bottom:16px;">
+       <table style="width:100%; border-collapse:collapse; font-size:0.88rem;">
+        <thead>
+         <tr style="border-bottom:2px solid var(--line); text-align:left; background:var(--surface-alt);">
+          <th style="padding:8px 12px;">Category</th>
+          <th style="padding:8px 12px;">Max Pts</th>
+          <th style="padding:8px 12px;">Evaluation Criteria</th>
+         </tr>
+        </thead>
+        <tbody>
+         <tr style="border-bottom:1px solid var(--line);">
+          <td style="padding:8px 12px;"><strong>Mission Objectives</strong></td>
+          <td style="padding:8px 12px; font-family:var(--font-mono); color:var(--amber);">40 pts</td>
+          <td style="padding:8px 12px;">Meeting target orbit profile, installing required primary science sensor suites, and matching design lifetime.</td>
+         </tr>
+         <tr style="border-bottom:1px solid var(--line);">
+          <td style="padding:8px 12px;"><strong>Science Return</strong></td>
+          <td style="padding:8px 12px; font-family:var(--font-mono); color:var(--amber);">25 pts</td>
+          <td style="padding:8px 12px;">Sensor resolution, data generation rate, and complete RF downlink closure with ground stations.</td>
+         </tr>
+         <tr style="border-bottom:1px solid var(--line);">
+          <td style="padding:8px 12px;"><strong>Engineering Efficiency</strong></td>
+          <td style="padding:8px 12px; font-family:var(--font-mono); color:var(--amber);">20 pts</td>
+          <td style="padding:8px 12px;">Rocket payload margin safety, budget headroom remaining, and electrical power generation vs draw.</td>
+         </tr>
+         <tr style="border-bottom:1px solid var(--line);">
+          <td style="padding:8px 12px;"><strong>Subsystem Reliability</strong></td>
+          <td style="padding:8px 12px; font-family:var(--font-mono); color:var(--amber);">15 pts</td>
+          <td style="padding:8px 12px;">Redundant avionics, thermal control loops, radiation hardening, and surviving space weather anomalies.</td>
+         </tr>
+         <tr style="border-bottom:1px solid var(--line); background:var(--surface-alt);">
+          <td style="padding:8px 12px;"><strong>Team Sync Bonus</strong></td>
+          <td style="padding:8px 12px; font-family:var(--font-mono); color:var(--go);">+10 pts max</td>
+          <td style="padding:8px 12px;">Awarded in Team Crew Mode when all 4 crew roles achieve unanimous consensus (Score capped at 100).</td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+
+      <h4 style="font-family:var(--font-heading); font-size:1.05rem; margin-top:12px; margin-bottom:6px;">Performance Grade Bands</h4>
+      <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; text-align:center;">
+       <div style="padding:8px; background:var(--surface-alt); border:1px solid var(--line);"><strong style="color:var(--amber); font-size:1.2rem;">S</strong><div style="font-size:0.75rem;">90–100</div></div>
+       <div style="padding:8px; background:var(--surface-alt); border:1px solid var(--line);"><strong style="color:var(--go); font-size:1.2rem;">A</strong><div style="font-size:0.75rem;">80–89</div></div>
+       <div style="padding:8px; background:var(--surface-alt); border:1px solid var(--line);"><strong style="color:var(--cyan); font-size:1.2rem;">B</strong><div style="font-size:0.75rem;">65–79</div></div>
+       <div style="padding:8px; background:var(--surface-alt); border:1px solid var(--line);"><strong style="color:var(--text); font-size:1.2rem;">C</strong><div style="font-size:0.75rem;">50–64</div></div>
+       <div style="padding:8px; background:var(--surface-alt); border:1px solid var(--line);"><strong style="color:var(--nogo); font-size:1.2rem;">FAIL</strong><div style="font-size:0.75rem;">&lt; 50</div></div>
+      </div>
+     </div>
+
+     <!-- Pane 3: Credits & Licenses -->
+     <div class="tab-pane" id="tab-pane-credits" role="tabpanel" aria-labelledby="tab-btn-credits" style="display:none;">
+      <h4 style="font-family:var(--font-heading); font-size:1.15rem; margin-bottom:8px;">NASA Educational References</h4>
+      <p style="margin-bottom:12px; font-size:0.9rem;">The concepts, subsystems, and flight phases in Mission Architect were informed by open NASA educational publications:</p>
+
+      <ul style="padding-left:20px; line-height:1.7; font-size:0.88rem; margin-bottom:16px;">
+       <li><a href="https://www.nasa.gov/wp-content/uploads/2025/04/250323-design-and-develop-science-mission.pdf?emrc=a454cf" target="_blank" rel="noopener noreferrer" style="color:var(--amber); text-decoration:underline;">NASA: Design and Develop Science Missions</a> &mdash; Mission lifecycle principles and trade-off structures.</li>
+       <li><a href="https://etd.gsfc.nasa.gov/capabilities/integrated-design-center/mission-design-lab/" target="_blank" rel="noopener noreferrer" style="color:var(--amber); text-decoration:underline;">NASA Goddard Mission Design Lab</a> &mdash; Rapid concurrent engineering workflow architecture.</li>
+       <li><a href="https://www3.nasa.gov/sites/default/files/atoms/files/nasa_csli_cubesat_101_508.pdf" target="_blank" rel="noopener noreferrer" style="color:var(--amber); text-decoration:underline;">NASA CubeSat 101: Basic Concepts and Processes</a> &mdash; Small satellite bus constraints, mass margins, and deployment specs.</li>
+       <li><a href="https://science.nasa.gov/mission/webb/game-build-it-yourself/" target="_blank" rel="noopener noreferrer" style="color:var(--amber); text-decoration:underline;">NASA Webb: Build It Yourself</a> &mdash; Educational telescope game used as inspiration for the modular build concept.</li>
+      </ul>
+
+      <h4 style="font-family:var(--font-heading); font-size:1.05rem; margin-top:14px; margin-bottom:6px;">Typography &amp; Open Source Licenses</h4>
+      <p style="font-size:0.88rem; line-height:1.6;">
+       &bull; <strong>Barlow Condensed, Space Grotesk, IBM Plex Sans &amp; IBM Plex Mono</strong>: Licensed under the <a href="https://openfontlicense.org" target="_blank" rel="noopener noreferrer" style="color:var(--text); text-decoration:underline;">SIL Open Font License 1.1</a>.<br>
+       &bull; <strong>Audio Engine</strong>: Synthesized real-time procedurally via browser Web Audio API. Zero copyrighted external audio files.<br>
+       &bull; <strong>Artwork &amp; Illustrations</strong>: Original SVG and HTML5 2D Canvas vectors created for this project.
+      </p>
+     </div>
+
+     <!-- Pane 4: Privacy -->
+     <div class="tab-pane" id="tab-pane-privacy" role="tabpanel" aria-labelledby="tab-btn-privacy" style="display:none;">
+      <h4 style="font-family:var(--font-heading); font-size:1.15rem; margin-bottom:8px;">Zero-Tracking Privacy Guarantee</h4>
+      <p style="margin-bottom:12px; line-height:1.6;">Mission Architect is committed to full user privacy and transparent execution:</p>
+      <ul style="padding-left:20px; line-height:1.8; font-size:0.9rem;">
+       <li><strong>Zero External Network Requests</strong>: The application runs 100% locally in your client browser after initial page load.</li>
+       <li><strong>No Tracking &amp; No Analytics</strong>: No Google Analytics, telemetry beacons, or third-party tracking scripts.</li>
+       <li><strong>No Cookies or User Profiling</strong>: No marketing cookies, fingerprinting, or advertising identifiers.</li>
+       <li><strong>Local Storage Only</strong>: High scores and past flight comparison data are stored strictly on your local device (HTML5 localStorage) and never transmitted anywhere.</li>
+      </ul>
+     </div>
+    </div>
+   </div>
+  </div>
+
+  <!-- Universal Educational Footer -->
+    
+  <!-- Accessible About & Credits Modal -->
+  <div class="modal-backdrop" id="about-credits-modal" role="dialog" aria-modal="true" aria-labelledby="about-modal-title" style="display:none;">
+   <div class="modal-dialog modal-dialog-lg" style="max-width:820px;">
+    <div class="modal-header">
+     <div style="display:flex; align-items:center; gap:8px;">
+      <span class="status-led led-amber"></span>
+      <h3 id="about-modal-title">MISSION ARCHITECT // SYSTEM DOSSIER &amp; CREDITS</h3>
+     </div>
+     <button class="btn btn-ghost btn-sm" id="close-about-btn" aria-label="Close About and Credits">✕</button>
+    </div>
+
+    <!-- Accessible Tabs Navigation -->
+    <div class="modal-tabs" role="tablist" aria-label="About modal sections">
+     <button class="modal-tab active" role="tab" id="tab-btn-about" aria-selected="true" aria-controls="tab-pane-about" data-target="about">01 // ABOUT</button>
+     <button class="modal-tab" role="tab" id="tab-btn-scores" aria-selected="false" aria-controls="tab-pane-scores" data-target="scores">02 // HOW SCORES WORK</button>
+     <button class="modal-tab" role="tab" id="tab-btn-credits" aria-selected="false" aria-controls="tab-pane-credits" data-target="credits">03 // CREDITS &amp; LICENSES</button>
+     <button class="modal-tab" role="tab" id="tab-btn-privacy" aria-selected="false" aria-controls="tab-pane-privacy" data-target="privacy">04 // PRIVACY</button>
+    </div>
+
+    <div class="modal-body modal-tabs-content" style="max-height:65vh; overflow-y:auto; padding:20px;">
+     <!-- Pane 1: About -->
+     <div class="tab-pane active" id="tab-pane-about" role="tabpanel" aria-labelledby="tab-btn-about">
+      <h4 style="font-family:var(--font-heading); font-size:1.15rem; margin-bottom:8px;">Space Mission Design Game</h4>
+      <p style="margin-bottom:12px;">Mission Architect is an educational aerospace engineering browser simulation built for the <strong>NASA Space Apps Challenge 2026</strong> (Challenge: Space Mission Design Game). Players balance critical aerospace trade-offs—mass, electrical power, capital budget, downlink bandwidth, and mission lifetime—to design, launch, and manage real scientific missions to Earth orbit, the Moon, or Mars.</p>
+      
+      <div class="spec-matrix" style="grid-template-columns: repeat(2, 1fr); margin-bottom:16px;">
+       <div class="spec-cell"><span class="spec-k">PROJECT LEAD &amp; DESIGN</span><span class="spec-v">[YOUR NAME]</span></div>
+       <div class="spec-cell"><span class="spec-k">TEAM ROSTER</span><span class="spec-v">[TEAM NAME]</span></div>
+       <div class="spec-cell"><span class="spec-k">CHALLENGE TRACK</span><span class="spec-v">SPACE APPS 2026</span></div>
+       <div class="spec-cell"><span class="spec-k">TECH ARCHITECTURE</span><span class="spec-v">HTML5 / CSS3 / ES MODULES</span></div>
+      </div>
+
+      <h4 style="font-family:var(--font-heading); font-size:1.05rem; margin-top:16px; margin-bottom:6px;">How This Was Made (AI Disclosure)</h4>
+      <p style="margin-bottom:12px; background:var(--surface-alt); padding:12px; border:1px solid var(--line); border-radius:var(--radius-xs);">
+       Mission Architect was designed by [YOUR NAME] / [TEAM NAME] and built with AI-assisted coding. Spacecraft, planet and mission patch artwork are original SVG and canvas drawings generated as code with AI assistance. Sound effects are synthesized in the browser with the Web Audio API. The game contains no AI model and makes no AI calls while running.
+      </p>
+
+      <h4 style="font-family:var(--font-heading); font-size:1.05rem; margin-top:16px; margin-bottom:6px;">Data &amp; Educational Accuracy Disclosure</h4>
+      <p style="margin-bottom:8px; font-size:0.9rem; color:var(--text-muted);">
+       Mission Architect is a simplified educational model. Mission structure, subsystems and trade-offs were informed by the NASA resources listed below. Part specifications, costs, orbit values and scores are simplified, illustrative numbers created for learning. They are not NASA datasets and not real mission data.
+      </p>
+     </div>
+
+     <!-- Pane 2: How Scores Work -->
+     <div class="tab-pane" id="tab-pane-scores" role="tabpanel" aria-labelledby="tab-btn-scores" style="display:none;">
+      <h4 style="font-family:var(--font-heading); font-size:1.15rem; margin-bottom:8px;">Evaluation &amp; Scoring Matrix (100 Pts Base)</h4>
+      <p style="margin-bottom:12px;">Missions undergo an automated post-flight evaluation across four aerospace pillars, plus an optional Team Sync bonus in collaborative crew mode.</p>
+
+      <div class="table-container" style="margin-bottom:16px;">
+       <table style="width:100%; border-collapse:collapse; font-size:0.88rem;">
+        <thead>
+         <tr style="border-bottom:2px solid var(--line); text-align:left; background:var(--surface-alt);">
+          <th style="padding:8px 12px;">Category</th>
+          <th style="padding:8px 12px;">Max Pts</th>
+          <th style="padding:8px 12px;">Evaluation Criteria</th>
+         </tr>
+        </thead>
+        <tbody>
+         <tr style="border-bottom:1px solid var(--line);">
+          <td style="padding:8px 12px;"><strong>Mission Objectives</strong></td>
+          <td style="padding:8px 12px; font-family:var(--font-mono); color:var(--amber);">40 pts</td>
+          <td style="padding:8px 12px;">Meeting target orbit profile, installing required primary science sensor suites, and matching design lifetime.</td>
+         </tr>
+         <tr style="border-bottom:1px solid var(--line);">
+          <td style="padding:8px 12px;"><strong>Science Return</strong></td>
+          <td style="padding:8px 12px; font-family:var(--font-mono); color:var(--amber);">25 pts</td>
+          <td style="padding:8px 12px;">Sensor resolution, data generation rate, and complete RF downlink closure with ground stations.</td>
+         </tr>
+         <tr style="border-bottom:1px solid var(--line);">
+          <td style="padding:8px 12px;"><strong>Engineering Efficiency</strong></td>
+          <td style="padding:8px 12px; font-family:var(--font-mono); color:var(--amber);">20 pts</td>
+          <td style="padding:8px 12px;">Rocket payload margin safety, budget headroom remaining, and electrical power generation vs draw.</td>
+         </tr>
+         <tr style="border-bottom:1px solid var(--line);">
+          <td style="padding:8px 12px;"><strong>Subsystem Reliability</strong></td>
+          <td style="padding:8px 12px; font-family:var(--font-mono); color:var(--amber);">15 pts</td>
+          <td style="padding:8px 12px;">Redundant avionics, thermal control loops, radiation hardening, and surviving space weather anomalies.</td>
+         </tr>
+         <tr style="border-bottom:1px solid var(--line); background:var(--surface-alt);">
+          <td style="padding:8px 12px;"><strong>Team Sync Bonus</strong></td>
+          <td style="padding:8px 12px; font-family:var(--font-mono); color:var(--go);">+10 pts max</td>
+          <td style="padding:8px 12px;">Awarded in Team Crew Mode when all 4 crew roles achieve unanimous consensus (Score capped at 100).</td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+
+      <h4 style="font-family:var(--font-heading); font-size:1.05rem; margin-top:12px; margin-bottom:6px;">Performance Grade Bands</h4>
+      <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; text-align:center;">
+       <div style="padding:8px; background:var(--surface-alt); border:1px solid var(--line);"><strong style="color:var(--amber); font-size:1.2rem;">S</strong><div style="font-size:0.75rem;">90–100</div></div>
+       <div style="padding:8px; background:var(--surface-alt); border:1px solid var(--line);"><strong style="color:var(--go); font-size:1.2rem;">A</strong><div style="font-size:0.75rem;">80–89</div></div>
+       <div style="padding:8px; background:var(--surface-alt); border:1px solid var(--line);"><strong style="color:var(--cyan); font-size:1.2rem;">B</strong><div style="font-size:0.75rem;">65–79</div></div>
+       <div style="padding:8px; background:var(--surface-alt); border:1px solid var(--line);"><strong style="color:var(--text); font-size:1.2rem;">C</strong><div style="font-size:0.75rem;">50–64</div></div>
+       <div style="padding:8px; background:var(--surface-alt); border:1px solid var(--line);"><strong style="color:var(--nogo); font-size:1.2rem;">FAIL</strong><div style="font-size:0.75rem;">&lt; 50</div></div>
+      </div>
+     </div>
+
+     <!-- Pane 3: Credits & Licenses -->
+     <div class="tab-pane" id="tab-pane-credits" role="tabpanel" aria-labelledby="tab-btn-credits" style="display:none;">
+      <h4 style="font-family:var(--font-heading); font-size:1.15rem; margin-bottom:8px;">NASA Educational References</h4>
+      <p style="margin-bottom:12px; font-size:0.9rem;">The concepts, subsystems, and flight phases in Mission Architect were informed by open NASA educational publications:</p>
+
+      <ul style="padding-left:20px; line-height:1.7; font-size:0.88rem; margin-bottom:16px;">
+       <li><a href="https://www.nasa.gov/wp-content/uploads/2025/04/250323-design-and-develop-science-mission.pdf?emrc=a454cf" target="_blank" rel="noopener noreferrer" style="color:var(--amber); text-decoration:underline;">NASA: Design and Develop Science Missions</a> &mdash; Mission lifecycle principles and trade-off structures.</li>
+       <li><a href="https://etd.gsfc.nasa.gov/capabilities/integrated-design-center/mission-design-lab/" target="_blank" rel="noopener noreferrer" style="color:var(--amber); text-decoration:underline;">NASA Goddard Mission Design Lab</a> &mdash; Rapid concurrent engineering workflow architecture.</li>
+       <li><a href="https://www3.nasa.gov/sites/default/files/atoms/files/nasa_csli_cubesat_101_508.pdf" target="_blank" rel="noopener noreferrer" style="color:var(--amber); text-decoration:underline;">NASA CubeSat 101: Basic Concepts and Processes</a> &mdash; Small satellite bus constraints, mass margins, and deployment specs.</li>
+       <li><a href="https://science.nasa.gov/mission/webb/game-build-it-yourself/" target="_blank" rel="noopener noreferrer" style="color:var(--amber); text-decoration:underline;">NASA Webb: Build It Yourself</a> &mdash; Educational telescope game used as inspiration for the modular build concept.</li>
+      </ul>
+
+      <h4 style="font-family:var(--font-heading); font-size:1.05rem; margin-top:14px; margin-bottom:6px;">Typography &amp; Open Source Licenses</h4>
+      <p style="font-size:0.88rem; line-height:1.6;">
+       &bull; <strong>Barlow Condensed, Space Grotesk, IBM Plex Sans &amp; IBM Plex Mono</strong>: Licensed under the <a href="https://openfontlicense.org" target="_blank" rel="noopener noreferrer" style="color:var(--text); text-decoration:underline;">SIL Open Font License 1.1</a>.<br>
+       &bull; <strong>Audio Engine</strong>: Synthesized real-time procedurally via browser Web Audio API. Zero copyrighted external audio files.<br>
+       &bull; <strong>Artwork &amp; Illustrations</strong>: Original SVG and HTML5 2D Canvas vectors created for this project.
+      </p>
+     </div>
+
+     <!-- Pane 4: Privacy -->
+     <div class="tab-pane" id="tab-pane-privacy" role="tabpanel" aria-labelledby="tab-btn-privacy" style="display:none;">
+      <h4 style="font-family:var(--font-heading); font-size:1.15rem; margin-bottom:8px;">Zero-Tracking Privacy Guarantee</h4>
+      <p style="margin-bottom:12px; line-height:1.6;">Mission Architect is committed to full user privacy and transparent execution:</p>
+      <ul style="padding-left:20px; line-height:1.8; font-size:0.9rem;">
+       <li><strong>Zero External Network Requests</strong>: The application runs 100% locally in your client browser after initial page load.</li>
+       <li><strong>No Tracking &amp; No Analytics</strong>: No Google Analytics, telemetry beacons, or third-party tracking scripts.</li>
+       <li><strong>No Cookies or User Profiling</strong>: No marketing cookies, fingerprinting, or advertising identifiers.</li>
+       <li><strong>Local Storage Only</strong>: High scores and past flight comparison data are stored strictly on your local device (HTML5 localStorage) and never transmitted anywhere.</li>
+      </ul>
+     </div>
+    </div>
+   </div>
+  </div>
+
+  <!-- Universal Educational Footer with Required Space Apps Disclosures -->
+  <footer class="app-footer">
+   <div class="footer-links-row">
+    <button class="footer-nav-btn" id="footer-about-btn">About &amp; Credits</button>
+    <span class="footer-dot">&bull;</span>
+    <button class="footer-nav-btn" id="footer-scores-btn">How Scores Work</button>
+    <span class="footer-dot">&bull;</span>
+    <button class="footer-nav-btn" id="footer-privacy-btn">Privacy</button>
+    <span class="footer-dot">&bull;</span>
+    <button class="footer-nav-btn" id="footer-glossary-btn">Spaceflight Glossary</button>
+   </div>
+   <p class="footer-ai-disclosure">Code and illustrations created with AI assistance. Simplified educational model. Not endorsed by NASA.</p>
+   <p class="footer-data-disclosure text-muted">Mission Architect is a simplified educational model. Mission structure, subsystems and trade-offs were informed by the NASA resources listed below. Part specifications, costs, orbit values and scores are simplified, illustrative numbers created for learning. They are not NASA datasets and not real mission data.</p>
+  </footer>
+ </div>
+
+ <!-- Vanilla ES Module Entry Point -->
+ <script type="module" src="js/main.js"></script>
+</body>
+</html>

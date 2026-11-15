@@ -1,0 +1,84 @@
+﻿/**
+ * Mission Architect - Design Tokens
+ * Aesthetic: Retro Monochrome Ink Sci-Fi ("Explore The Space" Vintage Editorial Concept)
+ * Cream paper canvas, starry organic black liquid blobs, 3D extruded typography, hand-drawn pen-and-ink illustrations
+ */
+
+:root {
+  /* Canvas & Monochrome Paper Palette */
+  --bg: #FAF9F5;
+  --bg-deep: #F3F1EA;
+  --bg-canvas: #FAF9F5;
+  --bg-blob: #0A0D12;
+  --bg-space-dark: #0A0D12;
+  --surface: #FFFFFF;
+  --surface-alt: #F6F5EF;
+  --surface-hover: #F2EFEB;
+  --surface-active: #E8E5DD;
+
+  /* Ink Linework & Borders */
+  --line: #0A0D12;
+  --line-strong: #0A0D12;
+  --line-subtle: #D8D5CB;
+  --line-glow: #0A0D12;
+  --line-amber: #B45309;
+
+  /* Typography & Contrast Colors */
+  --text: #0A0D12;
+  --text-bright: #000000;
+  --muted: #525866;
+  --dim: #7C8494;
+  --white: #FFFFFF;
+
+  /* High-Contrast Graphic Accents */
+  --black: #0A0D12;
+  --cyan: #0284C7;
+  --cyan-bright: #0369A1;
+  --cyan-dim: rgba(2, 132, 199, 0.12);
+
+  --purple: #6366F1;
+  --violet: #7C3AED;
+
+  --amber: #D97706;
+  --amber-bright: #B45309;
+  --amber-dim: rgba(217, 119, 6, 0.12);
+
+  --go: #15803D;
+  --go-dim: rgba(21, 128, 61, 0.12);
+  --nogo: #DC2626;
+  --nogo-dim: rgba(220, 38, 38, 0.12);
+
+  /* Tactical Hard Shadows & 3D Extrusion */
+  --shadow-hard-sm: 2px 2px 0px #0A0D12;
+  --shadow-hard: 4px 4px 0px #0A0D12;
+  --shadow-hard-hover: 6px 6px 0px #0A0D12;
+  --shadow-hard-lg: 8px 8px 0px #0A0D12;
+  --shadow-3d-text: 2px 2px 0px #0A0D12, 4px 4px 0px #0A0D12, 6px 6px 0px #0A0D12;
+  --shadow-3d-text-lg: 3px 3px 0px #0A0D12, 6px 6px 0px #0A0D12, 9px 9px 0px #0A0D12, 12px 12px 0px #0A0D12;
+
+  /* Radii */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 9999px;
+
+  /* Spacing Scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Typography Stack */
+  --font-heading: 'Space Grotesk', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SF Mono', Consolas, monospace;
+
+  /* Layout */
+  --header-height: 72px;
+  --max-content-width: 1260px;
+}
