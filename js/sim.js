@@ -549,21 +549,51 @@ function renderSimCanvas() {
     drawCommunicationsLink(ctx, satX, satY, cx, cy);
   }
 
-  // 8. Draw Spacecraft
-  drawSpacecraft(ctx, satX, satY, simState.orbitAngle, inEclipse);
+  // 8. Draw Rocket (Phase 0) or Spacecraft (Phases 1..4)
+  if (simState.phaseIndex === 0) {
+    // Realistic multi-stage launch vehicle during liftoff & ascent
+    drawRealisticRocketLaunch(ctx, satX, satY, simState.phaseProgress, state.launcherId);
 
-  // Thruster particle plume during burns (Phases 0 & 1)
-  if (simState.phaseIndex <= 1) {
+    // Dynamic Rocket Exhaust Particles
+    if (!simState.paused) {
+      spawnExhaustParticles(true);
+    }
     ctx.save();
     ctx.translate(satX, satY);
+    const pitchAngle = -Math.PI / 2 + (simState.phaseProgress * 1.3);
+    ctx.rotate(pitchAngle + Math.PI / 2);
     for (const p of simState.particles) {
       const alpha = p.life / p.maxLife;
       ctx.beginPath();
-      ctx.arc(p.x, p.y + 12, p.size, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255, 140, 40, ${alpha})`;
+      ctx.arc(p.x, p.y + 36, p.size, 0, Math.PI * 2);
+      if (p.isSmoke) {
+        ctx.fillStyle = `rgba(220, 225, 235, ${alpha * 0.45})`;
+      } else {
+        ctx.fillStyle = `rgba(255, 120, 20, ${alpha * 0.9})`;
+      }
       ctx.fill();
     }
     ctx.restore();
+  } else {
+    // Realistic scientific satellite in orbit
+    drawSpacecraft(ctx, satX, satY, simState.orbitAngle, inEclipse);
+
+    // In-space thruster firing during orbit transit / insertion burn (Phase 1)
+    if (simState.phaseIndex === 1) {
+      if (!simState.paused) {
+        spawnExhaustParticles(false);
+      }
+      ctx.save();
+      ctx.translate(satX, satY);
+      for (const p of simState.particles) {
+        const alpha = p.life / p.maxLife;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y + 14, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 160, 40, ${alpha * 0.8})`;
+        ctx.fill();
+      }
+      ctx.restore();
+    }
   }
 
   ctx.restore();
@@ -788,81 +818,509 @@ function drawPlanet(ctx, x, y, destKey) {
   ctx.restore();
 }
 
+/**
+ * Draws an authentic, realistic multi-stage rocket ascending during Phase 0 (Launch)
+ */
+function drawRealisticRocketLaunch(ctx, x, y, progress, launcherId) {
+  ctx.save();
+  ctx.translate(x, y);
+
+  // Gravity turn pitch: starts nearly vertical (-PI/2), smoothly pitches to ~ -0.25 rad
+  const pitchAngle = -Math.PI / 2 + (progress * 1.3);
+  ctx.rotate(pitchAngle + Math.PI / 2);
+
+  const isLight = launcherId === 'light';
+  const isHeavy = launcherId === 'heavy';
+  const isStaged = progress >= 0.72; // Fairing separation & staging point
+
+  // Rocket scales
+  const rocketW = isLight ? 12 : (isHeavy ? 36 : 18);
+  const rocketH = isLight ? 54 : 68;
+
+  // 1. If staged, draw fairing halves tumbling away & satellite emerging
+  if (isStaged) {
+    const stageProgress = (progress - 0.72) / 0.28;
+    const fairingDist = stageProgress * 32;
+    const fairingRot = stageProgress * 0.9;
+
+    // Left Fairing Half tumbling outward
+    ctx.save();
+    ctx.translate(-fairingDist, -rocketH/2 - 8);
+    ctx.rotate(-fairingRot);
+    ctx.fillStyle = '#FAF9F5';
+    ctx.strokeStyle = '#0A0D12';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(0, -14);
+    ctx.quadraticCurveTo(-8, -4, -6, 12);
+    ctx.lineTo(0, 12);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    // Right Fairing Half tumbling outward
+    ctx.save();
+    ctx.translate(fairingDist, -rocketH/2 - 8);
+    ctx.rotate(fairingRot);
+    ctx.fillStyle = '#FAF9F5';
+    ctx.strokeStyle = '#0A0D12';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(0, -14);
+    ctx.quadraticCurveTo(8, -4, 6, 12);
+    ctx.lineTo(0, 12);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    // Revealed Satellite at the payload mount
+    ctx.save();
+    ctx.translate(0, -rocketH/2 - 4);
+    drawSpacecraft(ctx, 0, 0, -Math.PI / 2, false);
+    ctx.restore();
+
+    // Second Stage Vacuum Engine Burn (clean violet/cyan plume)
+    const flicker = 0.9 + Math.sin(simState.elapsed * 45) * 0.15;
+    ctx.save();
+    ctx.translate(0, -rocketH/2 + 20);
+    // Vacuum engine nozzle
+    ctx.fillStyle = '#1A1E26';
+    ctx.beginPath();
+    ctx.moveTo(-4, 0); ctx.lineTo(-7, 10); ctx.lineTo(7, 10); ctx.lineTo(4, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    // Transparent vacuum plume
+    const vacGrad = ctx.createRadialGradient(0, 14, 2, 0, 24, 22);
+    vacGrad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+    vacGrad.addColorStop(0.3, 'rgba(120, 215, 255, 0.85)');
+    vacGrad.addColorStop(0.7, 'rgba(168, 85, 247, 0.4)');
+    vacGrad.addColorStop(1, 'rgba(168, 85, 247, 0)');
+    ctx.fillStyle = vacGrad;
+    ctx.beginPath();
+    ctx.ellipse(0, 24 * flicker, 14 * flicker, 20 * flicker, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    ctx.restore();
+    return;
+  }
+
+  // 2. Full Launch Vehicle Rocket Body (Pre-Staging Ascent)
+  // Left and Right Strap-on Boosters if Heavy
+  if (isHeavy) {
+    [-15, 15].forEach(boosterX => {
+      ctx.save();
+      ctx.translate(boosterX, 0);
+      // Aerodynamic nosecone
+      ctx.fillStyle = '#FAF9F5';
+      ctx.strokeStyle = '#0A0D12';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(0, -rocketH/2 + 10);
+      ctx.lineTo(-5, -rocketH/2 + 18);
+      ctx.lineTo(5, -rocketH/2 + 18);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Booster cylinder body
+      ctx.fillStyle = '#FAF9F5';
+      ctx.beginPath();
+      ctx.roundRect(-5, -rocketH/2 + 18, 10, rocketH - 18, 1);
+      ctx.fill();
+      ctx.stroke();
+
+      // Attachment struts to center core
+      ctx.fillStyle = '#0A0D12';
+      ctx.fillRect(boosterX < 0 ? 5 : -7, -rocketH/2 + 28, 2, 3);
+      ctx.fillRect(boosterX < 0 ? 5 : -7, rocketH/2 - 12, 2, 3);
+
+      // Booster engine bells
+      ctx.beginPath();
+      ctx.moveTo(-4, rocketH/2);
+      ctx.lineTo(-6, rocketH/2 + 6);
+      ctx.lineTo(6, rocketH/2 + 6);
+      ctx.lineTo(4, rocketH/2);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    });
+  }
+
+  // Center Core Main Rocket Body
+  const coreW = isLight ? 12 : 16;
+  const halfCore = coreW / 2;
+
+  // Payload Fairing (Aerodynamic Ogive Nosecone)
+  ctx.fillStyle = '#FAF9F5';
+  ctx.strokeStyle = '#0A0D12';
+  ctx.lineWidth = 1.8;
+  ctx.beginPath();
+  ctx.moveTo(0, -rocketH/2 - 14);
+  ctx.quadraticCurveTo(-halfCore - 2, -rocketH/2 - 4, -halfCore, -rocketH/2 + 4);
+  ctx.lineTo(halfCore, -rocketH/2 + 4);
+  ctx.quadraticCurveTo(halfCore + 2, -rocketH/2 - 4, 0, -rocketH/2 - 14);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // Fairing separation line
+  ctx.strokeStyle = '#0A0D12';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([2, 2]);
+  ctx.beginPath();
+  ctx.moveTo(0, -rocketH/2 - 12);
+  ctx.lineTo(0, -rocketH/2 + 4);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Second Stage
+  ctx.fillStyle = '#FAF9F5';
+  ctx.strokeStyle = '#0A0D12';
+  ctx.lineWidth = 1.8;
+  ctx.beginPath();
+  ctx.rect(-halfCore, -rocketH/2 + 4, coreW, 16);
+  ctx.fill();
+  ctx.stroke();
+
+  // Interstage lattice ring
+  ctx.fillStyle = '#1A1E26';
+  ctx.fillRect(-halfCore, -rocketH/2 + 20, coreW, 6);
+
+  // Hypersonic Titanium Grid Fins (on medium/heavy)
+  if (!isLight) {
+    ctx.fillStyle = '#FAF9F5';
+    ctx.strokeStyle = '#0A0D12';
+    ctx.lineWidth = 1.2;
+    ctx.fillRect(-halfCore - 5, -rocketH/2 + 20, 5, 5);
+    ctx.strokeRect(-halfCore - 5, -rocketH/2 + 20, 5, 5);
+    ctx.fillRect(halfCore, -rocketH/2 + 20, 5, 5);
+    ctx.strokeRect(halfCore, -rocketH/2 + 20, 5, 5);
+  }
+
+  // First Stage Main Booster Body
+  ctx.fillStyle = '#FAF9F5';
+  ctx.strokeStyle = '#0A0D12';
+  ctx.lineWidth = 1.8;
+  ctx.beginPath();
+  ctx.rect(-halfCore, -rocketH/2 + 26, coreW, rocketH - 26);
+  ctx.fill();
+  ctx.stroke();
+
+  // Vertical avionics conduit raceway
+  ctx.strokeStyle = '#0A0D12';
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  ctx.moveTo(-halfCore + 2.5, -rocketH/2 + 26);
+  ctx.lineTo(-halfCore + 2.5, rocketH/2);
+  ctx.stroke();
+
+  // Engine Bells at Base
+  ctx.fillStyle = '#0A0D12';
+  ctx.beginPath();
+  ctx.moveTo(-halfCore + 2, rocketH/2);
+  ctx.lineTo(-halfCore, rocketH/2 + 6);
+  ctx.lineTo(halfCore, rocketH/2 + 6);
+  ctx.lineTo(halfCore - 2, rocketH/2);
+  ctx.closePath();
+  ctx.fill();
+
+  // 3. Supersonic Rocket Exhaust Plume & Shock Diamonds
+  const flicker = 0.85 + Math.sin(simState.elapsed * 55) * 0.18;
+  const flameH = (isHeavy ? 54 : (isLight ? 36 : 46)) * flicker;
+  const flameW = (isHeavy ? 28 : (isLight ? 14 : 18)) * flicker;
+  const flameY = rocketH / 2 + 5;
+
+  // Outer turbulent fiery exhaust (Orange/Red)
+  const outerGrad = ctx.createLinearGradient(0, flameY, 0, flameY + flameH);
+  outerGrad.addColorStop(0, 'rgba(255, 230, 80, 0.95)');
+  outerGrad.addColorStop(0.3, 'rgba(255, 130, 20, 0.9)');
+  outerGrad.addColorStop(0.7, 'rgba(235, 60, 20, 0.7)');
+  outerGrad.addColorStop(1, 'rgba(235, 60, 20, 0)');
+
+  ctx.fillStyle = outerGrad;
+  ctx.beginPath();
+  ctx.moveTo(-flameW / 2, flameY);
+  ctx.quadraticCurveTo(-flameW * 0.8, flameY + flameH * 0.5, 0, flameY + flameH);
+  ctx.quadraticCurveTo(flameW * 0.8, flameY + flameH * 0.5, flameW / 2, flameY);
+  ctx.closePath();
+  ctx.fill();
+
+  // Inner blazing plasma core (White / Pale Yellow)
+  const innerGrad = ctx.createLinearGradient(0, flameY, 0, flameY + flameH * 0.6);
+  innerGrad.addColorStop(0, '#FFFFFF');
+  innerGrad.addColorStop(0.5, '#FFE259');
+  innerGrad.addColorStop(1, 'rgba(255, 180, 40, 0)');
+
+  ctx.fillStyle = innerGrad;
+  ctx.beginPath();
+  ctx.moveTo(-flameW * 0.35, flameY);
+  ctx.lineTo(0, flameY + flameH * 0.6);
+  ctx.lineTo(flameW * 0.35, flameY);
+  ctx.closePath();
+  ctx.fill();
+
+  // Supersonic Shock Diamond Discs
+  ctx.fillStyle = '#FFFFFF';
+  for (let d = 1; d <= 3; d++) {
+    const dy = flameY + (d * 9 * flicker);
+    ctx.beginPath();
+    ctx.ellipse(0, dy, 3.5, 1.8, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.restore();
+}
+
+/**
+ * Draws a realistic scientific satellite with detailed MLI foil, solar panels, and sensors
+ */
 function drawSpacecraft(ctx, x, y, angle, inEclipse) {
   ctx.save();
   ctx.translate(x, y);
   ctx.rotate(angle + Math.PI / 2);
 
-  // Satellite Chassis Bus (Cream with bold black ink outline)
-  ctx.fillStyle = inEclipse ? '#D5D2C7' : '#FAF9F5';
-  ctx.strokeStyle = '#0A0D12';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.roundRect(-9, -9, 18, 18, 2);
-  ctx.fill();
-  ctx.stroke();
+  const busId = (state && state.busId) ? state.busId : 'small';
+  const panelId = (state && state.panelId) ? state.panelId : 'medium';
+  const antennaId = (state && state.antennaId) ? state.antennaId : 'dish_small';
+  const instrumentIds = (state && state.instrumentIds) ? state.instrumentIds : [];
 
-  // Internal avionics cross
-  ctx.strokeStyle = inEclipse ? '#8A96A8' : '#FFB224';
-  ctx.lineWidth = 1.2;
-  ctx.beginPath();
-  ctx.moveTo(-4, 0); ctx.lineTo(4, 0);
-  ctx.moveTo(0, -4); ctx.lineTo(0, 4);
-  ctx.stroke();
+  // 1. Central Bus Structure with Gold MLI (Multi-Layer Insulation) Foil
+  const isCube = busId === 'cube';
+  const isHeavy = busId === 'heavy';
+  const busW = isCube ? 14 : (isHeavy ? 26 : 20);
+  const busH = isCube ? 14 : (isHeavy ? 26 : 20);
 
-  // Solar Wings (left & right)
-  const wingFill = inEclipse ? '#C8C4B7' : '#FAF9F5';
-  ctx.fillStyle = wingFill;
-  ctx.strokeStyle = '#0A0D12';
-  ctx.lineWidth = 1.8;
+  // MLI Blanket texture
+  const foilGrad = ctx.createLinearGradient(-busW/2, -busH/2, busW/2, busH/2);
+  if (inEclipse) {
+    foilGrad.addColorStop(0, '#A39E93');
+    foilGrad.addColorStop(0.5, '#7C776D');
+    foilGrad.addColorStop(1, '#5A564E');
+  } else {
+    foilGrad.addColorStop(0, '#F6D365');
+    foilGrad.addColorStop(0.4, '#FDA085');
+    foilGrad.addColorStop(0.7, '#F6D365');
+    foilGrad.addColorStop(1, '#D97706');
+  }
 
-  // Left wing
-  ctx.beginPath();
-  ctx.roundRect(-28, -7, 16, 14, 2);
-  ctx.fill();
-  ctx.stroke();
-
-  // Left wing gold solar cell grid lines
-  ctx.strokeStyle = inEclipse ? '#8A96A8' : '#FFB224';
-  ctx.lineWidth = 1.2;
-  ctx.beginPath();
-  ctx.moveTo(-20, -7); ctx.lineTo(-20, 7);
-  ctx.moveTo(-28, 0); ctx.lineTo(-12, 0);
-  ctx.stroke();
-
-  // Right wing
+  // Bus chassis body
+  ctx.fillStyle = foilGrad;
   ctx.strokeStyle = '#0A0D12';
   ctx.lineWidth = 1.8;
   ctx.beginPath();
-  ctx.roundRect(12, -7, 16, 14, 2);
+  ctx.roundRect(-busW/2, -busH/2, busW, busH, isHeavy ? 4 : 2);
   ctx.fill();
   ctx.stroke();
 
-  // Right wing gold solar cell grid lines
-  ctx.strokeStyle = inEclipse ? '#8A96A8' : '#FFB224';
-  ctx.lineWidth = 1.2;
+  // MLI Quilted seams / foil ribs
+  ctx.strokeStyle = inEclipse ? '#4A463F' : 'rgba(10, 13, 18, 0.4)';
+  ctx.lineWidth = 0.8;
   ctx.beginPath();
-  ctx.moveTo(20, -7); ctx.lineTo(20, 7);
-  ctx.moveTo(12, 0); ctx.lineTo(28, 0);
+  ctx.moveTo(-busW/2 + 4, -busH/2); ctx.lineTo(-busW/2 + 4, busH/2);
+  ctx.moveTo(busW/2 - 4, -busH/2); ctx.lineTo(busW/2 - 4, busH/2);
+  ctx.moveTo(-busW/2, 0); ctx.lineTo(busW/2, 0);
   ctx.stroke();
 
-  // Steerable Antenna Dish
-  ctx.beginPath();
-  ctx.arc(0, -11, 5, Math.PI, 0);
-  ctx.fillStyle = '#FAF9F5';
-  ctx.fill();
-  ctx.strokeStyle = '#0A0D12';
-  ctx.lineWidth = 2;
-  ctx.stroke();
+  // Attitude Control Thruster (RCS) Pods on corners
+  ctx.fillStyle = '#0A0D12';
+  ctx.fillRect(-busW/2 - 1.5, -busH/2 - 1.5, 3, 3);
+  ctx.fillRect(busW/2 - 1.5, -busH/2 - 1.5, 3, 3);
+  ctx.fillRect(-busW/2 - 1.5, busH/2 - 1.5, 3, 3);
+  ctx.fillRect(busW/2 - 1.5, busH/2 - 1.5, 3, 3);
 
-  // Feed horn & Status beacon LED
-  ctx.fillStyle = inEclipse ? '#FFB224' : '#34D399';
+  // Optical sensor aperture lens on top face
+  ctx.fillStyle = '#0A0D12';
   ctx.beginPath();
-  ctx.arc(0, -14, 2.5, 0, Math.PI * 2);
+  ctx.arc(0, -busH/2 + 4, 3, 0, Math.PI * 2);
   ctx.fill();
-  ctx.strokeStyle = '#0A0D12';
-  ctx.lineWidth = 1;
-  ctx.stroke();
+  ctx.fillStyle = inEclipse ? '#60A5FA' : '#38BDF8';
+  ctx.beginPath();
+  ctx.arc(0, -busH/2 + 4, 1.8, 0, Math.PI * 2);
+  ctx.fill();
+
+  // 2. Realistic Solar Arrays / Power Source
+  if (panelId === 'rtg') {
+    // Cylindrical RTG Unit with Heat Radiator Fins
+    ctx.save();
+    ctx.translate(-busW/2 - 8, 0);
+    ctx.fillStyle = inEclipse ? '#6B7280' : '#1F2937';
+    ctx.strokeStyle = '#0A0D12';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.roundRect(-4, -8, 8, 16, 2);
+    ctx.fill();
+    ctx.stroke();
+    // Cooling radiator fins
+    ctx.strokeStyle = inEclipse ? '#9CA3AF' : '#F59E0B';
+    ctx.lineWidth = 1;
+    for (let f = -6; f <= 6; f += 3) {
+      ctx.beginPath();
+      ctx.moveTo(-7, f); ctx.lineTo(7, f);
+      ctx.stroke();
+    }
+    // Thermal emitter core
+    ctx.fillStyle = '#EF4444';
+    ctx.beginPath();
+    ctx.arc(0, 0, 1.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  } else {
+    // Realistic Photovoltaic Multi-Junction Solar Wings
+    const wingWidth = panelId === 'medium' ? 32 : (panelId === 'small' ? 16 : 24);
+    const wingHeight = panelId === 'medium' ? 18 : 14;
+    const cellColor = inEclipse ? '#374151' : '#1E3A8A'; // Deep space blue cells
+    const cellBorder = inEclipse ? '#4B5563' : '#F59E0B'; // Gold busbars
+
+    // Left Solar Wing
+    ctx.save();
+    ctx.translate(-busW/2, 0);
+    // Hinge strut
+    ctx.strokeStyle = '#0A0D12';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-4, 0); ctx.stroke();
+
+    // Wing panel
+    ctx.fillStyle = cellColor;
+    ctx.strokeStyle = '#0A0D12';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.roundRect(-4 - wingWidth, -wingHeight/2, wingWidth, wingHeight, 1.5);
+    ctx.fill();
+    ctx.stroke();
+
+    // Gold solar cell gridlines
+    ctx.strokeStyle = cellBorder;
+    ctx.lineWidth = 0.9;
+    const cols = panelId === 'medium' ? 4 : 2;
+    for (let c = 1; c < cols; c++) {
+      const gx = -4 - (c * (wingWidth / cols));
+      ctx.beginPath();
+      ctx.moveTo(gx, -wingHeight/2); ctx.lineTo(gx, wingHeight/2);
+      ctx.stroke();
+    }
+    ctx.beginPath();
+    ctx.moveTo(-4 - wingWidth, 0); ctx.lineTo(-4, 0);
+    ctx.stroke();
+    ctx.restore();
+
+    // Right Solar Wing
+    ctx.save();
+    ctx.translate(busW/2, 0);
+    // Hinge strut
+    ctx.strokeStyle = '#0A0D12';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(4, 0); ctx.stroke();
+
+    // Wing panel
+    ctx.fillStyle = cellColor;
+    ctx.strokeStyle = '#0A0D12';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.roundRect(4, -wingHeight/2, wingWidth, wingHeight, 1.5);
+    ctx.fill();
+    ctx.stroke();
+
+    // Gold solar cell gridlines
+    ctx.strokeStyle = cellBorder;
+    ctx.lineWidth = 0.9;
+    for (let c = 1; c < cols; c++) {
+      const gx = 4 + (c * (wingWidth / cols));
+      ctx.beginPath();
+      ctx.moveTo(gx, -wingHeight/2); ctx.lineTo(gx, wingHeight/2);
+      ctx.stroke();
+    }
+    ctx.beginPath();
+    ctx.moveTo(4, 0); ctx.lineTo(4 + wingWidth, 0);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // 3. Realistic Communications Antenna
+  if (antennaId === 'high') {
+    // Large High-Gain Parabolic Cassegrain Dish
+    ctx.save();
+    ctx.translate(0, -busH/2 - 2);
+    // Dish Gimbal Boom
+    ctx.strokeStyle = '#0A0D12';
+    ctx.lineWidth = 1.8;
+    ctx.beginPath(); ctx.moveTo(0, 2); ctx.lineTo(0, -5); ctx.stroke();
+    // Parabolic Reflector (Gold Mesh)
+    ctx.fillStyle = inEclipse ? '#9CA3AF' : '#FCD34D';
+    ctx.strokeStyle = '#0A0D12';
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.arc(0, -11, 9, Math.PI, 0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    // Subreflector Feedhorn Tripod
+    ctx.strokeStyle = '#0A0D12';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(-5, -11); ctx.lineTo(0, -16);
+    ctx.moveTo(5, -11); ctx.lineTo(0, -16);
+    ctx.stroke();
+    ctx.fillStyle = inEclipse ? '#F59E0B' : '#10B981';
+    ctx.beginPath(); ctx.arc(0, -16, 2, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  } else if (antennaId === 'low') {
+    // Helical / Dual Whip Antenna
+    ctx.save();
+    ctx.translate(0, -busH/2);
+    ctx.strokeStyle = '#0A0D12';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(-4, 0); ctx.lineTo(-7, -10);
+    ctx.moveTo(4, 0); ctx.lineTo(7, -10);
+    ctx.stroke();
+    ctx.fillStyle = inEclipse ? '#F59E0B' : '#10B981';
+    ctx.beginPath();
+    ctx.arc(-7, -10, 1.5, 0, Math.PI * 2);
+    ctx.arc(7, -10, 1.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  } else {
+    // Medium Steerable Parabolic Dish
+    ctx.save();
+    ctx.translate(0, -busH/2);
+    ctx.beginPath();
+    ctx.arc(0, -8, 6, Math.PI, 0);
+    ctx.fillStyle = inEclipse ? '#D1D5DB' : '#FAF9F5';
+    ctx.fill();
+    ctx.strokeStyle = '#0A0D12';
+    ctx.lineWidth = 1.8;
+    ctx.stroke();
+    // Feedhorn & Active Beacon
+    ctx.fillStyle = inEclipse ? '#F59E0B' : '#10B981';
+    ctx.beginPath();
+    ctx.arc(0, -12, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#0A0D12';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // 4. Extended Scientific Instrument Booms
+  if (instrumentIds.includes('mag')) {
+    // Deployable Magnetometer Boom extending diagonally downward
+    ctx.save();
+    ctx.translate(busW/2 - 2, busH/2 - 2);
+    ctx.strokeStyle = '#0A0D12';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(0, 0); ctx.lineTo(12, 12);
+    ctx.stroke();
+    // Fluxgate sensor heads
+    ctx.fillStyle = '#FFB224';
+    ctx.beginPath(); ctx.arc(12, 12, 2.2, 0, Math.PI * 2); ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
 
   ctx.restore();
 }

@@ -801,7 +801,14 @@ function renderMissionSelect() {
  }
 }
 
+let lastStepIndex = -1;
 function renderBuildScreen(res) {
+ if (lastStepIndex !== state.currentStep) {
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  const stepCol = document.getElementById('build-step-content');
+  if (stepCol) stepCol.scrollTop = 0;
+  lastStepIndex = state.currentStep;
+ }
  const stepItems = document.querySelectorAll('.rail-step-item, .step-item');
  stepItems.forEach((item) => {
   const idx = parseInt(item.dataset.stepIndex, 10);
@@ -1067,6 +1074,10 @@ function renderBuildScreen(res) {
          <span class="selected-tag" style="${isSelected ? 'display:inline-flex;' : 'display:none;'}">ASSIGNED</span>
          <span class="status-led ${cannotReach ? 'led-nogo' : (isSelected ? 'led-amber pulse' : 'led-go')}"></span>
         </div>
+        <!-- Realistic Rocket Technical Schematic Preview -->
+        <div class="launcher-blueprint-preview" aria-hidden="true">
+         ${generateRocketIllustrationSVG(lnch.id)}
+        </div>
         <div class="card-part-title">
          <h4>${lnch.name}</h4>
          <span class="badge badge-amber">$${lnch.cost}M</span>
@@ -1281,7 +1292,189 @@ function updateStepperNavButtons(res) {
 /**
  * Generates an SVG illustration of the assembled spacecraft based on current selections.
  */
-﻿function generateSpacecraftPreviewSVG(state) {
+﻿
+/**
+ * Generates an authentic technical blueprint illustration for launch vehicles
+ */
+function generateRocketIllustrationSVG(launcherId) {
+ if (launcherId === 'light') {
+  return `
+   <svg viewBox="0 0 230 120" width="100%" height="120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Grid & Measurement Callouts -->
+    <line x1="20" y1="12" x2="20" y2="108" stroke="#0A0D12" stroke-width="0.8" stroke-dasharray="2 2" opacity="0.4"/>
+    <line x1="16" y1="12" x2="24" y2="12" stroke="#0A0D12" stroke-width="1"/>
+    <line x1="16" y1="108" x2="24" y2="108" stroke="#0A0D12" stroke-width="1"/>
+    <text x="14" y="62" font-family="var(--font-mono)" font-size="7.5" font-weight="700" fill="#0A0D12" text-anchor="end">18 m</text>
+
+    <!-- Stage Callout Tags -->
+    <text x="145" y="24" font-family="var(--font-mono)" font-size="7" font-weight="700" fill="#0A0D12">FAIRING // 1.2m</text>
+    <line x1="94" y1="22" x2="140" y2="22" stroke="#0A0D12" stroke-width="0.8" stroke-dasharray="2 2"/>
+    <text x="145" y="56" font-family="var(--font-mono)" font-size="7" font-weight="700" fill="#0A0D12">STAGE 2 // VAC</text>
+    <line x1="90" y1="54" x2="140" y2="54" stroke="#0A0D12" stroke-width="0.8" stroke-dasharray="2 2"/>
+    <text x="145" y="90" font-family="var(--font-mono)" font-size="7" font-weight="700" fill="#0A0D12">STAGE 1 // BOOSTER</text>
+    <line x1="90" y1="88" x2="140" y2="88" stroke="#0A0D12" stroke-width="0.8" stroke-dasharray="2 2"/>
+
+    <!-- Light-Lift Sleek Single Core (Center X = 80) -->
+    <!-- Payload Fairing -->
+    <path d="M 80 12 C 74 18 72 26 72 36 L 88 36 C 88 26 86 18 80 12 Z" fill="#FAF9F5" stroke="#0A0D12" stroke-width="1.8"/>
+    <line x1="80" y1="14" x2="80" y2="36" stroke="#0A0D12" stroke-width="0.8" stroke-dasharray="2 2"/>
+    <!-- Inside payload silhouette -->
+    <rect x="76" y="22" width="8" height="10" rx="1" fill="#FFB224" fill-opacity="0.4" stroke="#0A0D12" stroke-width="0.8"/>
+
+    <!-- Interstage Ring -->
+    <rect x="72" y="36" width="16" height="4" fill="#0A0D12"/>
+
+    <!-- Second Stage -->
+    <rect x="72.5" y="40" width="15" height="24" fill="#FAF9F5" stroke="#0A0D12" stroke-width="1.6"/>
+    <!-- Raceway conduit -->
+    <line x1="74" y1="40" x2="74" y2="64" stroke="#0A0D12" stroke-width="1.2"/>
+
+    <!-- Interstage 1/2 with separation lattice -->
+    <rect x="72" y="64" width="16" height="5" fill="#E2DFD6" stroke="#0A0D12" stroke-width="1.2"/>
+    <line x1="75" y1="64" x2="77" y2="69" stroke="#0A0D12" stroke-width="1"/>
+    <line x1="81" y1="64" x2="83" y2="69" stroke="#0A0D12" stroke-width="1"/>
+    <line x1="87" y1="64" x2="85" y2="69" stroke="#0A0D12" stroke-width="1"/>
+
+    <!-- First Stage Main Booster Body -->
+    <rect x="72.5" y="69" width="15" height="34" fill="#FAF9F5" stroke="#0A0D12" stroke-width="1.6"/>
+    <!-- Vertical stringers & markings -->
+    <line x1="74" y1="69" x2="74" y2="103" stroke="#0A0D12" stroke-width="1.2"/>
+    <line x1="80" y1="78" x2="80" y2="96" stroke="#0A0D12" stroke-width="0.8" stroke-dasharray="3 3"/>
+
+    <!-- Aerodynamic Base Fins -->
+    <polygon points="72.5,96 66,104 72.5,103" fill="#0A0D12"/>
+    <polygon points="87.5,96 94,104 87.5,103" fill="#0A0D12"/>
+
+    <!-- Engine Bell -->
+    <path d="M 76 103 L 74 109 L 86 109 L 84 103 Z" fill="#0A0D12"/>
+    <circle cx="80" cy="107" r="1.5" fill="#FFB224"/>
+   </svg>
+  `;
+ } else if (launcherId === 'medium') {
+  return `
+   <svg viewBox="0 0 210 120" width="100%" height="120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Grid & Height Marker -->
+    <line x1="20" y1="8" x2="20" y2="110" stroke="#0A0D12" stroke-width="0.8" stroke-dasharray="2 2" opacity="0.4"/>
+    <line x1="16" y1="8" x2="24" y2="8" stroke="#0A0D12" stroke-width="1"/>
+    <line x1="16" y1="110" x2="24" y2="110" stroke="#0A0D12" stroke-width="1"/>
+    <text x="14" y="62" font-family="var(--font-mono)" font-size="7.5" font-weight="700" fill="#0A0D12" text-anchor="end">70 m</text>
+
+    <!-- Callouts -->
+    <text x="165" y="20" font-family="var(--font-mono)" font-size="7" font-weight="700" fill="#0A0D12">FAIRING // 3.7m</text>
+    <line x1="104" y1="18" x2="160" y2="18" stroke="#0A0D12" stroke-width="0.8" stroke-dasharray="2 2"/>
+    <text x="165" y="46" font-family="var(--font-mono)" font-size="7" font-weight="700" fill="#0A0D12">GRID FINS // Ti</text>
+    <line x1="106" y1="44" x2="160" y2="44" stroke="#0A0D12" stroke-width="0.8" stroke-dasharray="2 2"/>
+    <text x="165" y="94" font-family="var(--font-mono)" font-size="7" font-weight="700" fill="#0A0D12">OCTAWEB // 9 ENGINES</text>
+    <line x1="102" y1="92" x2="160" y2="92" stroke="#0A0D12" stroke-width="0.8" stroke-dasharray="2 2"/>
+
+    <!-- Medium-Lift 2-Stage Rocket (Center X = 90) -->
+    <!-- Payload Fairing (Aerodynamic Ogive) -->
+    <path d="M 90 8 C 82 14 78 22 78 32 L 102 32 C 102 22 98 14 90 8 Z" fill="#FAF9F5" stroke="#0A0D12" stroke-width="1.8"/>
+    <line x1="90" y1="10" x2="90" y2="32" stroke="#0A0D12" stroke-width="0.8" stroke-dasharray="2 2"/>
+    <!-- Payload inside -->
+    <rect x="85" y="18" width="10" height="12" rx="1.5" fill="#FFB224" fill-opacity="0.35" stroke="#0A0D12" stroke-width="0.8"/>
+
+    <!-- Second Stage -->
+    <rect x="79" y="32" width="22" height="16" fill="#FAF9F5" stroke="#0A0D12" stroke-width="1.6"/>
+    <line x1="81" y1="32" x2="81" y2="48" stroke="#0A0D12" stroke-width="1.2"/>
+
+    <!-- Interstage with Titanium Grid Fins -->
+    <rect x="78.5" y="48" width="23" height="8" fill="#1A1E26" stroke="#0A0D12" stroke-width="1.4"/>
+    <!-- Left & Right Grid Fins -->
+    <rect x="73" y="49" width="5.5" height="6" fill="#FAF9F5" stroke="#0A0D12" stroke-width="1"/>
+    <line x1="74.5" y1="51" x2="77" y2="51" stroke="#0A0D12" stroke-width="0.8"/>
+    <rect x="101.5" y="49" width="5.5" height="6" fill="#FAF9F5" stroke="#0A0D12" stroke-width="1"/>
+    <line x1="103" y1="51" x2="105.5" y2="51" stroke="#0A0D12" stroke-width="0.8"/>
+
+    <!-- Booster Core (First Stage) -->
+    <rect x="79" y="56" width="22" height="48" fill="#FAF9F5" stroke="#0A0D12" stroke-width="1.8"/>
+    <!-- Center stripe & avionics raceway -->
+    <line x1="81" y1="56" x2="81" y2="104" stroke="#0A0D12" stroke-width="1.4"/>
+    <line x1="90" y1="62" x2="90" y2="98" stroke="#0A0D12" stroke-width="0.8" stroke-dasharray="3 3"/>
+
+    <!-- Deployable Landing Legs (folded) -->
+    <polygon points="79,88 75,103 79,102" fill="#0A0D12"/>
+    <polygon points="101,88 105,103 101,102" fill="#0A0D12"/>
+
+    <!-- Octaweb Engine Cluster (Base) -->
+    <rect x="80" y="104" width="20" height="2" fill="#0A0D12"/>
+    <path d="M 81 106 L 79 110 L 84 110 L 83 106 Z" fill="#0A0D12"/>
+    <path d="M 85 106 L 83 111 L 89 111 L 88 106 Z" fill="#0A0D12"/>
+    <path d="M 90 106 L 89 111 L 95 111 L 94 106 Z" fill="#0A0D12"/>
+    <path d="M 96 106 L 95 110 L 100 110 L 98 106 Z" fill="#0A0D12"/>
+    <!-- Exhaust Glow Dot -->
+    <circle cx="89" cy="108" r="1.8" fill="#FFB224"/>
+   </svg>
+  `;
+ } else {
+  // Heavy-Lift Multi-Core Cluster
+  return `
+   <svg viewBox="0 0 230 120" width="100%" height="120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Height Marker -->
+    <line x1="16" y1="8" x2="16" y2="110" stroke="#0A0D12" stroke-width="0.8" stroke-dasharray="2 2" opacity="0.4"/>
+    <line x1="12" y1="8" x2="20" y2="8" stroke="#0A0D12" stroke-width="1"/>
+    <line x1="12" y1="110" x2="20" y2="110" stroke="#0A0D12" stroke-width="1"/>
+    <text x="10" y="62" font-family="var(--font-mono)" font-size="7.5" font-weight="700" fill="#0A0D12" text-anchor="end">70 m</text>
+
+    <!-- Callouts -->
+    <text x="175" y="18" font-family="var(--font-mono)" font-size="7" font-weight="700" fill="#0A0D12">FAIRING // 5.2m</text>
+    <line x1="118" y1="16" x2="170" y2="16" stroke="#0A0D12" stroke-width="0.8" stroke-dasharray="2 2"/>
+    <text x="175" y="48" font-family="var(--font-mono)" font-size="7" font-weight="700" fill="#0A0D12">2x SIDE BOOSTERS</text>
+    <line x1="124" y1="46" x2="170" y2="46" stroke="#0A0D12" stroke-width="0.8" stroke-dasharray="2 2"/>
+    <text x="175" y="96" font-family="var(--font-mono)" font-size="7" font-weight="700" fill="#0A0D12">27x ENGINE CLUSTER</text>
+    <line x1="126" y1="94" x2="170" y2="94" stroke="#0A0D12" stroke-width="0.8" stroke-dasharray="2 2"/>
+
+    <!-- Heavy-Lift 3-Core Rocket (Center X = 100) -->
+    <!-- Left Strap-on Booster Core (X = 76) -->
+    <path d="M 76 34 L 84 34 L 85 44 L 75 44 Z" fill="#0A0D12"/>
+    <path d="M 80 26 C 76 29 75 34 75 38 L 85 38 C 85 34 84 29 80 26 Z" fill="#FAF9F5" stroke="#0A0D12" stroke-width="1.5"/>
+    <rect x="74.5" y="38" width="11" height="64" fill="#FAF9F5" stroke="#0A0D12" stroke-width="1.5"/>
+    <!-- Booster attachment strut -->
+    <rect x="85.5" y="46" width="3.5" height="4" fill="#0A0D12"/>
+    <rect x="85.5" y="88" width="3.5" height="4" fill="#0A0D12"/>
+    <!-- Booster Engine Bells -->
+    <path d="M 75 102 L 73 107 L 78 107 L 77 102 Z" fill="#0A0D12"/>
+    <path d="M 82 102 L 81 107 L 86 107 L 85 102 Z" fill="#0A0D12"/>
+
+    <!-- Right Strap-on Booster Core (X = 114) -->
+    <path d="M 120 26 C 116 29 115 34 115 38 L 125 38 C 125 34 124 29 120 26 Z" fill="#FAF9F5" stroke="#0A0D12" stroke-width="1.5"/>
+    <rect x="114.5" y="38" width="11" height="64" fill="#FAF9F5" stroke="#0A0D12" stroke-width="1.5"/>
+    <!-- Booster attachment strut -->
+    <rect x="111" y="46" width="3.5" height="4" fill="#0A0D12"/>
+    <rect x="111" y="88" width="3.5" height="4" fill="#0A0D12"/>
+    <!-- Booster Engine Bells -->
+    <path d="M 115 102 L 114 107 L 119 107 L 118 102 Z" fill="#0A0D12"/>
+    <path d="M 122 102 L 121 107 L 126 107 L 125 102 Z" fill="#0A0D12"/>
+
+    <!-- Center Core & Massive Fairing (Center X = 100) -->
+    <!-- Heavy Fairing -->
+    <path d="M 100 8 C 88 15 85 24 85 36 L 115 36 C 115 24 112 15 100 8 Z" fill="#FAF9F5" stroke="#0A0D12" stroke-width="1.8"/>
+    <line x1="100" y1="10" x2="100" y2="36" stroke="#0A0D12" stroke-width="0.8" stroke-dasharray="2 2"/>
+    <!-- Dedicated Probe inside -->
+    <rect x="94" y="20" width="12" height="13" rx="2" fill="#FFB224" fill-opacity="0.4" stroke="#0A0D12" stroke-width="1"/>
+
+    <!-- Second Stage -->
+    <rect x="89" y="36" width="22" height="14" fill="#FAF9F5" stroke="#0A0D12" stroke-width="1.6"/>
+    <!-- Interstage -->
+    <rect x="88.5" y="50" width="23" height="6" fill="#1A1E26" stroke="#0A0D12" stroke-width="1.4"/>
+
+    <!-- Center Sustainer Core -->
+    <rect x="89" y="56" width="22" height="48" fill="#FAF9F5" stroke="#0A0D12" stroke-width="1.8"/>
+    <line x1="91" y1="56" x2="91" y2="104" stroke="#0A0D12" stroke-width="1.4"/>
+    <line x1="100" y1="62" x2="100" y2="98" stroke="#0A0D12" stroke-width="0.8" stroke-dasharray="3 3"/>
+
+    <!-- Center Core Engine Cluster -->
+    <rect x="90" y="104" width="20" height="2" fill="#0A0D12"/>
+    <path d="M 91 106 L 89 110 L 94 110 L 93 106 Z" fill="#0A0D12"/>
+    <path d="M 95 106 L 94 111 L 100 111 L 99 106 Z" fill="#0A0D12"/>
+    <path d="M 101 106 L 100 111 L 106 111 L 105 106 Z" fill="#0A0D12"/>
+    <circle cx="100" cy="108" r="2.2" fill="#FFB224"/>
+   </svg>
+  `;
+ }
+}
+
+function generateSpacecraftPreviewSVG(state) {
  const bus = BUSES[state.busId] || BUSES.small;
  const panel = SOLAR_PANELS[state.panelId] || SOLAR_PANELS.medium;
  const antenna = ANTENNAS[state.antennaId] || ANTENNAS.dish_small;
@@ -2424,8 +2617,11 @@ export function setupEventListeners() {
    return;
   }
 
-  if (target.id === 'review-launch-btn') {
-   triggerLaunchSequence();
+  const reviewLaunchBtn = target.closest('#review-launch-btn');
+  if (reviewLaunchBtn) {
+   if (!reviewLaunchBtn.disabled) {
+    triggerLaunchSequence();
+   }
    return;
   }
 
