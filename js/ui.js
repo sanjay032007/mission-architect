@@ -1245,7 +1245,7 @@ function renderBuildScreen(res) {
     <div id="review-launch-fails-box" style="margin-top:var(--space-4);"></div>
 
     <div style="margin-top:var(--space-5); text-align:center;">
-     <button class="btn btn-primary btn-lg" id="review-launch-btn" ${res.canLaunch && allTeamApproved ? '' : 'disabled'} style="min-height:56px; padding: 0 40px; font-size:1.15rem;">
+     <button class="btn btn-primary btn-lg" id="review-launch-btn" ${res.canLaunch && allTeamApproved ? '' : 'disabled'}>
       ${res.canLaunch && allTeamApproved ? 'AUTHORIZE LAUNCH SEQUENCE &rarr;' : 'LAUNCH INTERLOCK ACTIVE (RESOLVE NO-GO ITEMS)'}
      </button>
     </div>
